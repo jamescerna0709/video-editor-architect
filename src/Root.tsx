@@ -4,6 +4,7 @@
 import {Composition} from 'remotion';
 import {Reel} from './reel/Reel';
 import {EdicionBase, edicionVacia, type Edicion} from './esquema/edicion';
+import {Personajes3D} from './borradores/Personajes3D';
 
 /**
  * Una sola composición. La duración sale de la EDL (`duracion_s`) vía calculateMetadata,
@@ -11,6 +12,7 @@ import {EdicionBase, edicionVacia, type Edicion} from './esquema/edicion';
  * Ojo: Remotion NO valida las props contra el schema al renderizar; eso lo hace herramientas/validar.ts.
  */
 export const RemotionRoot: React.FC = () => (
+	<>
 	<Composition
 		id="Reel"
 		component={Reel}
@@ -24,4 +26,7 @@ export const RemotionRoot: React.FC = () => (
 			durationInFrames: Math.max(1, Math.round(props.duracion_s * 30)),
 		})}
 	/>
+	{/* Borrador independiente: personajes 2D en escena 3D (no usa la EDL). */}
+	<Composition id="Personajes3D" component={Personajes3D} fps={30} width={1080} height={1920} durationInFrames={300} />
+	</>
 );
