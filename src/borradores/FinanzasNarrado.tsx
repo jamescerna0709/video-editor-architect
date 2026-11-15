@@ -44,7 +44,7 @@ const normal = (s: string) =>
 		.replace(/[^a-z0-9$%,]/g, '');
 
 /** Ubica momentos de la narración por escena y palabra. */
-const tiempos = (n: Narracion) => {
+export const tiempos = (n: Narracion) => {
 	const esc = (id: string) => {
 		const e = n.escenas.find((x) => x.id === id);
 		if (!e) throw new Error(`La narración no tiene la escena "${id}"`);
@@ -62,7 +62,7 @@ const tiempos = (n: Narracion) => {
 	};
 	return {esc, en, finDe};
 };
-type Tiempos = ReturnType<typeof tiempos>;
+export type Tiempos = ReturnType<typeof tiempos>;
 
 // ---------- tomas de cámara: cada una va de una pose a otra, con cortes secos entre tomas ----------
 type Pose = {pos: V3; mira: V3};
