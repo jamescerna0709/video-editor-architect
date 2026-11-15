@@ -1,6 +1,6 @@
 # ESTADO
 
-Estado: hay dos borradores 3D hechos en código: "Personajes3D" (10 s) y "Finanzas3D" (32 s, educación financiera con personajes 3D y sonido), ambos renderizados en local y sin costo.
+Estado: hay tres borradores 3D hechos en código; el principal es "FinanzasNarrado" (~104 s, narrado, con el estilo de las referencias del creador), renderizado en local y sin costo.
 
 ## Qué se hizo
 
@@ -9,12 +9,17 @@ Estado: hay dos borradores 3D hechos en código: "Personajes3D" (10 s) y "Finanz
 - 2026-11-15: composición `Finanzas3D` (`src/borradores/FinanzasTresD.tsx` + modelos en `src/borradores/finanzas/modelos.tsx`): cerdito 3D, monstruo "Inflación", frasco, banco, torre de monedas, flecha y calendario, todo con primitivas de three.js. Historia: $50 diarios → $18,250 en un año → con 5% de inflación vale como $17,381 → cuenta al 10% anual: $20,075 → 5 años: $29,392. Cierra con "Cifras de ejemplo. No es asesoría financiera." 1080×1920, 30 fps, 32 s.
 - Sonidos y música sintetizados en código: `npx tsx herramientas/borradores/sonidos-finanzas.ts` → `proyectos/2026-11-15-finanzas-3d/sonidos/` (hay que correrlo antes de renderizar en una máquina nueva).
 - Render: `proyectos/2026-11-15-finanzas-3d/salida/borrador-v1.mp4`.
+- 2026-11-15: el creador pasó 3 reels de referencia (Instagram Dfue1S-ACmN, DfvqL4TgFc9, DfdTW8zBrqQ), bajados gratis con yt-dlp y medidos con `herramientas/estilo/referencia.ts --estilo finanzas-3d` (en `referencias/`, no se versiona). Estilo visto: narración de principio a fin, dioramas 3D low-poly (barrio mexicano, casas en corte), subtítulo de UNA palabra blanco al ~62 % de alto, etiquetas en mayúsculas amarillas, tarjetas blancas con borde negro y encabezado rojo, cámara lenta, 4.6–9.9 cortes/min (toma mediana 4.4–9.7 s, n=3 reels, fuente ritmo.json), 78–115 s.
+- Composición `FinanzasNarrado` (`src/borradores/FinanzasNarrado.tsx`): guion en `src/borradores/finanzas/guion.json`, escenarios 3D en `finanzas/escenarios.tsx`, capas 2D en `finanzas/capas.tsx`. Tomas, tarjetas, etiquetas y sonidos se amarran a palabras de la narración, así que se reacomoda si cambia la voz.
+- Voz: `npx tsx herramientas/borradores/voz-finanzas.ts --tts` (Piper `es_MX-ald-medium`, dominio público) → `proyectos/2026-11-15-finanzas-3d/voz/narracion.{wav,json}`. Con la voz del creador: `--audio <grabación>` (mismo guion). Después: `npx tsx herramientas/borradores/sonidos-finanzas.ts` (rehace `musica-larga.wav` con las escenas) y renderizar.
+- Render: `proyectos/2026-11-15-finanzas-3d/salida/narrado-v1.mp4`.
 
 ## Qué sigue
 
 - Que el creador revise el borrador y diga qué cambiar (personajes, escena, textos, duración, ritmo).
+- Que el creador revise `FinanzasNarrado` (y si quiere grabar su voz con el guion).
 - Que el creador revise `Finanzas3D` (personajes, ritmo, textos, sonidos, si quiere voz en off con su propia voz).
-- El estilo de las cuentas de referencia (eresunanimal, loconstruiste) no se ha visto: el borrador se basa en una descripción general. Para aprenderlo de verdad hay que entrenar un estilo con sus reels (`/entrenar-estilo`, puede costar créditos de Apify) o que el creador comparta algunos reels.
+- Si el creador quiere, guardar lo aprendido de las referencias como estilo formal (`/entrenar-estilo`, perfil en `estilo/estilos/`).
 - Falta `creador.json` (correr `/empezar`).
 
 ## Decisiones
@@ -24,3 +29,5 @@ Estado: hay dos borradores 3D hechos en código: "Personajes3D" (10 s) y "Finanz
 - Render en Linux: `--gl=swangle` y el `chrome-headless-shell` de `/opt/pw-browsers` (Remotion no puede bajar el suyo).
 - Cifras financieras del reel: de ejemplo, con la cuenta comprobada (interés compuesto anual) y aviso en pantalla.
 - Sonidos: sintetizados en código (propios, sin licencia de terceros), no salen de `biblioteca/sfx/`.
+- Alineación de palabras con `jonatasgrosman/wav2vec2-large-xlsr-53-spanish` (Apache-2.0); el MMS del repo es CC-BY-NC (no comercial) y queda solo como opción `--modelo mms`.
+- Piper no es determinista: rehacer `--tts` mueve los tiempos unas décimas; la composición se reacomoda sola.

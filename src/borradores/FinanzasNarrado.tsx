@@ -12,7 +12,7 @@ import {useLayoutEffect} from 'react';
 import {AbsoluteFill, Easing, interpolate, Sequence, staticFile, useCurrentFrame, useVideoConfig} from 'remotion';
 import * as THREE from 'three';
 import {Anios, Comparar, Contador, Dias, Etiqueta, Lista, Precio, Subtitulos, Tarjeta} from './finanzas/capas';
-import {Alcancia, Barrio, Billete, CajaFuerte, CasaCorte, Grafica3D, MESA_CASA, Persona, Tienda} from './finanzas/escenarios';
+import {Alcancia, Barrio, Billete, CajaFuerte, CasaCorte, Grafica3D, Luces, MESA_CASA, Persona, Tienda} from './finanzas/escenarios';
 import {Banco, Moneda, TorreMonedas} from './finanzas/modelos';
 
 export const FPS_NARRADO = 30;
@@ -73,15 +73,15 @@ const tomas = (T: Tiempos): Toma[] => {
 	const e = T.esc;
 	const lista: Omit<Toma, 'hasta'>[] = [
 		// gancho: vista del barrio que baja hacia el billete
-		{desde: 0, set: 'gancho', a: {pos: [0, 7, 14], mira: [0, 1.5, 0]}, b: {pos: [0, 2.2, 5.2], mira: [0, 1.6, 0]}},
+		{desde: 0, set: 'gancho', a: {pos: [0.6, 3.4, 8.5], mira: [0, 1.6, 0]}, b: {pos: [0.2, 1.9, 3.8], mira: [0, 1.7, 0]}},
 		// ahorro: casa en corte, luego cerca de la alcancía
 		{desde: e('ahorro').inicio, set: 'casa', a: {pos: [3.2, 4.2, 10], mira: [0, 2.2, 0]}, b: {pos: [1.6, 3.2, 7.5], mira: [0, 1.8, 0]}},
 		{desde: T.en('ahorro', 'día'), set: 'casa', a: {pos: [MESA_CASA[0] + 1.4, MESA_CASA[1] + 0.9, MESA_CASA[2] + 3.2], mira: [MESA_CASA[0], MESA_CASA[1] + 0.3, MESA_CASA[2]]}, b: {pos: [MESA_CASA[0] + 0.6, MESA_CASA[1] + 0.7, MESA_CASA[2] + 2.6], mira: [MESA_CASA[0], MESA_CASA[1] + 0.25, MESA_CASA[2]]}},
 		{desde: T.en('ahorro', 'al'), set: 'casa', a: {pos: [-2.5, 3.6, 9], mira: [0, 2, 0]}, b: {pos: [-1.2, 3.0, 8], mira: [0, 1.9, 0]}},
 		// inflación: la tienda
-		{desde: e('inflacion').inicio, set: 'tienda', a: {pos: [-3, 3.5, 9], mira: [0, 1.4, 0]}, b: {pos: [-1, 2.4, 6.5], mira: [0, 1.3, 0]}},
-		{desde: T.en('inflacion', 'si'), set: 'tienda', a: {pos: [1.2, 1.9, 4.2], mira: [0, 1.3, 0]}, b: {pos: [0.4, 1.8, 3.6], mira: [0, 1.3, 0]}},
-		{desde: T.en('inflacion', 'tus'), set: 'tienda', a: {pos: [2.5, 2.6, 6.5], mira: [0, 1.4, 0]}, b: {pos: [3.2, 3.0, 7.5], mira: [0, 1.5, 0]}},
+		{desde: e('inflacion').inicio, set: 'tienda', a: {pos: [-3, 3.8, 9], mira: [0, 1.8, 0]}, b: {pos: [-1, 2.8, 6.8], mira: [0, 1.8, 0]}},
+		{desde: T.en('inflacion', 'si'), set: 'tienda', a: {pos: [1.0, 2.5, 4.4], mira: [0, 2.1, 0]}, b: {pos: [0.4, 2.4, 3.8], mira: [0, 2.1, 0]}},
+		{desde: T.en('inflacion', 'tus'), set: 'tienda', a: {pos: [2.5, 2.8, 6.5], mira: [0.4, 1.6, 0]}, b: {pos: [3.2, 3.2, 7.5], mira: [0.4, 1.7, 0]}},
 		// intereses: el banco y la caja fuerte
 		{desde: e('intereses').inicio, set: 'banco', a: {pos: [0, 6, 13], mira: [0, 1.6, -1]}, b: {pos: [-1, 3.2, 8.5], mira: [0.3, 1.4, -0.5]}},
 		{desde: T.en('intereses', 'si'), set: 'banco', a: {pos: [3.2, 2.2, 5.5], mira: [1.6, 0.9, 0.5]}, b: {pos: [2.8, 2.0, 4.6], mira: [1.6, 0.9, 0.5]}},
@@ -123,6 +123,7 @@ const Mundo: React.FC<{T: Tiempos; lista: Toma[]; fin: number}> = ({T, lista, fi
 	return (
 		<>
 			<Camara toma={toma} t={t} fin={fin} />
+			<Luces tarde={tarde} />
 			<Barrio tarde={tarde} />
 			{toma.set === 'gancho' && <SetGancho T={T} t={t} />}
 			{toma.set === 'casa' && <SetCasa T={T} t={t} />}
@@ -140,8 +141,8 @@ const SetGancho: React.FC<PropsSet> = ({T, t}) => {
 	const encoge = tramo(t, T.en('gancho', 'encogiendo'), T.finDe('gancho', 'menos'), 0, 1);
 	return (
 		<>
-			<group position={[0, 1.6 + Math.sin(t * 1.5) * 0.06, 0]} rotation={[0.15, t * 0.4, 0]}>
-				<Billete escala={2.2} encoge={encoge} valor="$100" />
+			<group position={[0, 1.7 + Math.sin(t * 1.5) * 0.06, 0]} rotation={[0.1, Math.sin(t * 0.6) * 0.5, 0]}>
+				<Billete escala={2.6} encoge={encoge} valor="$100" />
 			</group>
 			<Persona position={[-1.6, 0, 0.8]} rotationY={0.5} />
 		</>
@@ -165,7 +166,7 @@ const SetCasa: React.FC<PropsSet> = ({T, t}) => {
 				if (k < 0 || k > 1) return null;
 				return <Moneda key={i} position={[mx + 0.02, my + 1.4 - k * k * 0.9, mz]} rotation={[Math.PI / 2, 0, k * 4]} escala={0.6} />;
 			})}
-			<Persona position={[mx - 1.0, 0, mz + 0.5]} rotationY={0.9} senala={tramo(t, golpes[0] - 0.3, golpes[0], 0, 1) * tramo(t, golpes[2] + 0.4, golpes[2] + 0.8, 1, 0)} celebra={tramo(t, fondo, fondo + 0.4, 0, 1)} />
+			<Persona position={[mx - 1.0, 0.2, mz + 0.5]} rotationY={0.9} senala={tramo(t, golpes[0] - 0.3, golpes[0], 0, 1) * tramo(t, golpes[2] + 0.4, golpes[2] + 0.8, 1, 0)} celebra={tramo(t, fondo, fondo + 0.4, 0, 1)} />
 		</>
 	);
 };
@@ -239,56 +240,56 @@ const Capas: React.FC<{T: Tiempos}> = ({T}) => {
 	const precioCambio = tramo(t, en('inflacion', '$105') - 0.1, en('inflacion', '$105') + 0.3, 0, 1);
 	const diasLlenos = t < en('ahorro', 'día', 1) ? 0 : t < en('ahorro', 'día', 2) ? 1 : Math.round(tramo(t, en('ahorro', 'día', 2), en('ahorro', '$500'), 1, 10));
 	const marcados = [en('revisa', 'uno'), en('revisa', 'dos'), en('revisa', 'tres', 2)].filter((m) => t >= m).length;
-	const aniosActivos = ['dos', 'tres', '$29,392'].filter((w) => t >= en('compuesto', w)).length;
+	const aniosActivos = 1 + (t >= en('compuesto', 'dos') ? 1 : 0) + (t >= en('compuesto', 'tres') ? 1 : 0) + (t >= en('compuesto', 'cinco') ? 2 : 0);
 	return (
 		<>
 			{/* gancho */}
-			<Etiqueta texto="SE ENCOGE" desde={en('gancho', 'encogiendo')} hasta={en('gancho', 'aunque')} x={540} y={520} />
-			<Etiqueta texto="COMPRA MENOS" desde={en('gancho', 'compra')} hasta={en('gancho', 'te')} x={540} y={520} pildora />
+			<Etiqueta texto="SE ENCOGE" desde={en('gancho', 'encogiendo')} hasta={en('gancho', 'aunque')} x={540} y={360} />
+			<Etiqueta texto="COMPRA MENOS" desde={en('gancho', 'compra')} hasta={en('gancho', 'te')} x={540} y={360} pildora />
 
 			{/* ahorro */}
-			<Etiqueta texto="$50 DIARIOS" desde={en('ahorro', '$50')} hasta={en('ahorro', 'día')} x={540} y={470} />
-			<Tarjeta titulo="DÍAS" desde={en('ahorro', 'día')} hasta={en('ahorro', 'al')} y={560}>
+			<Etiqueta texto="$50 DIARIOS" desde={en('ahorro', '$50')} hasta={en('ahorro', 'día')} x={540} y={360} />
+			<Tarjeta titulo="DÍAS" desde={en('ahorro', 'día')} hasta={en('ahorro', 'al')} y={640}>
 				<Dias desde={en('ahorro', 'día')} total={10} llenos={diasLlenos} />
 			</Tarjeta>
-			<Tarjeta titulo="EN 1 AÑO" desde={en('ahorro', 'tienes')} hasta={en('ahorro', 'felicidades') + 0.6} y={560}>
+			<Tarjeta titulo="EN 1 AÑO" desde={en('ahorro', 'tienes')} hasta={en('ahorro', 'felicidades') + 0.6} y={640}>
 				<Contador desde={en('ahorro', 'tienes')} de={0} a={18250} dura={Math.max(0.8, finDe('ahorro', '$18,250') - en('ahorro', 'tienes'))} prefijo="$" />
 			</Tarjeta>
-			<Etiqueta texto="¡YA TIENES UN FONDO!" desde={en('ahorro', 'fondo') - 0.3} hasta={fin('ahorro')} x={540} y={470} />
+			<Etiqueta texto="¡YA TIENES UN FONDO!" desde={en('ahorro', 'fondo') - 0.3} hasta={fin('ahorro')} x={540} y={360} />
 
 			{/* inflación */}
-			<Etiqueta texto="INFLACIÓN" desde={en('inflacion', 'inflación')} hasta={en('inflacion', 'si')} x={540} y={470} pildora />
-			<Tarjeta titulo="PRECIO" desde={en('inflacion', '$100')} hasta={en('inflacion', 'tus')} y={560}>
+			<Etiqueta texto="INFLACIÓN" desde={en('inflacion', 'inflación')} hasta={en('inflacion', 'si')} x={540} y={360} pildora />
+			<Tarjeta titulo="PRECIO" desde={en('inflacion', '$100')} hasta={en('inflacion', 'tus')} y={640}>
 				<Precio desde={en('inflacion', '$100')} antes="$100" despues="$105" cambio={precioCambio} />
 			</Tarjeta>
-			<Tarjeta titulo="EN 1 AÑO" desde={en('inflacion', 'en')} hasta={en('inflacion', 'perdiste')} y={560} ancho={760}>
+			<Tarjeta titulo="EN 1 AÑO" desde={en('inflacion', 'en')} hasta={en('inflacion', 'perdiste')} y={640} ancho={760}>
 				<Comparar desde={en('inflacion', 'en')} izq={{titulo: 'Hoy', valor: '$18,250'}} der={{titulo: 'Vale como', valor: '$17,381', color: '#e8423a'}} ganador="izq" />
 			</Tarjeta>
-			<Etiqueta texto="-$869" desde={en('inflacion', 'perdiste')} hasta={fin('inflacion')} x={540} y={520} tam={130} />
+			<Etiqueta texto="-$869" desde={en('inflacion', 'perdiste')} hasta={fin('inflacion')} x={540} y={360} tam={130} />
 
 			{/* intereses */}
-			<Etiqueta texto="INTERESES" desde={en('intereses', 'intereses')} hasta={en('intereses', 'si')} x={540} y={470} pildora />
-			<Tarjeta titulo="10% AL AÑO" desde={en('intereses', 'si')} hasta={en('intereses', 'le')} y={560}>
+			<Etiqueta texto="INTERESES" desde={en('intereses', 'intereses')} hasta={en('intereses', 'si')} x={540} y={360} pildora />
+			<Tarjeta titulo="10% AL AÑO" desde={en('intereses', 'si')} hasta={en('intereses', 'le')} y={640}>
 				<Contador desde={en('intereses', '$20,075')} de={18250} a={20075} dura={0.9} prefijo="$" color="#21a65b" />
 			</Tarjeta>
-			<Tarjeta titulo="¿QUIÉN GANA?" desde={en('intereses', 'le')} hasta={fin('intereses')} y={560} ancho={760}>
+			<Tarjeta titulo="¿QUIÉN GANA?" desde={en('intereses', 'le')} hasta={fin('intereses')} y={640} ancho={760}>
 				<Comparar desde={en('intereses', 'le')} izq={{titulo: 'Inflación', valor: '5%'}} der={{titulo: 'Tu cuenta', valor: '10%', color: '#21a65b'}} ganador="der" />
 			</Tarjeta>
 
 			{/* compuesto */}
-			<Etiqueta texto="INTERÉS COMPUESTO" desde={en('compuesto', 'interés')} hasta={en('compuesto', 'dos') - 0.4} x={540} y={470} />
-			<Tarjeta titulo="SIN METER MÁS" desde={en('compuesto', 'dos') - 0.3} hasta={fin('compuesto')} y={500} ancho={860}>
-				<Anios desde={en('compuesto', 'dos') - 0.3} activos={aniosActivos} valores={['$22,083', '$24,291', '$29,392']} />
+			<Etiqueta texto="INTERÉS COMPUESTO" desde={en('compuesto', 'interés')} hasta={en('compuesto', 'dos') - 0.4} x={540} y={360} />
+			<Tarjeta titulo="SIN METER MÁS" desde={en('compuesto', 'dos') - 0.3} hasta={fin('compuesto')} y={640} ancho={860}>
+				<Anios desde={en('compuesto', 'dos') - 0.3} activos={aniosActivos} valores={['$20,075', '$22,083', '$24,291', '$26,720', '$29,392']} />
 			</Tarjeta>
 
 			{/* revisa */}
-			<Tarjeta titulo="REVISA" desde={en('revisa', 'revisa')} hasta={fin('revisa')} y={560} ancho={800}>
+			<Tarjeta titulo="REVISA" desde={en('revisa', 'revisa')} hasta={fin('revisa')} y={640} ancho={800}>
 				<Lista desde={en('revisa', 'revisa')} items={['Que esté regulada', 'Cuánto paga al año con comisiones', 'Si puedes sacar tu dinero']} marcados={marcados} />
 			</Tarjeta>
 
 			{/* cierre */}
-			<Etiqueta texto="PIERDE VALOR" desde={en('cierre', 'pierde')} hasta={en('cierre', 'el', 3)} x={540} y={470} pildora />
-			<Etiqueta texto="¡CRECE!" desde={en('cierre', 'crece')} hasta={fin('cierre') + 3} x={540} y={470} tam={130} />
+			<Etiqueta texto="PIERDE VALOR" desde={en('cierre', 'pierde')} hasta={en('cierre', 'el', 3)} x={540} y={360} pildora />
+			<Etiqueta texto="¡CRECE!" desde={en('cierre', 'crece')} hasta={fin('cierre') + 3} x={540} y={360} tam={130} />
 		</>
 	);
 };
@@ -355,7 +356,7 @@ export const FinanzasNarrado: React.FC<PropsNarrado> = ({narracion}) => {
 	const aviso = interpolate(frame / FPS_NARRADO, [T.esc('cierre').inicio, T.esc('cierre').inicio + 0.4], [0, 1], fijo);
 	return (
 		<AbsoluteFill style={{backgroundColor: '#9fd3ef'}}>
-			<ThreeCanvas width={width} height={height} camera={{fov: 45, near: 0.1, far: 120}} gl={{antialias: true, preserveDrawingBuffer: true}}>
+			<ThreeCanvas width={width} height={height} shadows camera={{fov: 42, near: 0.1, far: 300}} gl={{antialias: true, preserveDrawingBuffer: true, toneMapping: THREE.NeutralToneMapping}}>
 				<Mundo T={T} lista={lista} fin={fin} />
 			</ThreeCanvas>
 			<Capas T={T} />
