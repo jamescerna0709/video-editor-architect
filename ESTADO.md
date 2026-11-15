@@ -1,6 +1,6 @@
 # ESTADO
 
-Estado: hay tres borradores 3D hechos en código; el principal es "FinanzasNarrado" (~104 s, narrado, con el estilo de las referencias del creador), renderizado en local y sin costo.
+Estado: el reel principal es "AlcanzaNarrado" (~97 s, promo narrada de la app Alcanza del creador, estilo de sus referencias), renderizado en local y sin costo; también están "FinanzasNarrado" y dos borradores 3D anteriores.
 
 ## Qué se hizo
 
@@ -13,9 +13,14 @@ Estado: hay tres borradores 3D hechos en código; el principal es "FinanzasNarra
 - Composición `FinanzasNarrado` (`src/borradores/FinanzasNarrado.tsx`): guion en `src/borradores/finanzas/guion.json`, escenarios 3D en `finanzas/escenarios.tsx`, capas 2D en `finanzas/capas.tsx`. Tomas, tarjetas, etiquetas y sonidos se amarran a palabras de la narración, así que se reacomoda si cambia la voz.
 - Voz: `npx tsx herramientas/borradores/voz-finanzas.ts --tts` (Piper `es_MX-ald-medium`, dominio público) → `proyectos/2026-11-15-finanzas-3d/voz/narracion.{wav,json}`. Con la voz del creador: `--audio <grabación>` (mismo guion). Después: `npx tsx herramientas/borradores/sonidos-finanzas.ts` (rehace `musica-larga.wav` con las escenas) y renderizar.
 - Render: `proyectos/2026-11-15-finanzas-3d/salida/narrado-v1.mp4`; con el audio normalizado a −14 LUFS / −1.5 dBTP (ffmpeg loudnorm): `final-v1.mp4`.
+- 2026-11-15: reel de Alcanza (app del creador): guion del creador en `src/borradores/alcanza/guion.json` (español de Perú, casi literal), composición `AlcanzaNarrado` (`src/borradores/AlcanzaNarrado.tsx`), celular con las pantallas de la app en `alcanza/telefono.tsx` (copiadas de su artifact: cómic sobre papel crema, salvia/terracota/miel, Baloo 2 + Nunito, compañero y frasco), objetos 3D en `alcanza/props3d.tsx`. Cámara nueva: mira fija, acercamiento corto y quieta (el creador notó que en el reel anterior la cámara se desviaba).
+- Voz: `npx tsx herramientas/borradores/voz-finanzas.ts --tts --guion src/borradores/alcanza/guion.json --salida proyectos/2026-11-15-alcanza/voz` (94.1 s). Música: `npx tsx herramientas/borradores/sonidos-finanzas.ts --musica-para proyectos/2026-11-15-alcanza/voz/narracion.json --secciones B=hormiga,C=alcanza --destino proyectos/2026-11-15-alcanza/sonidos` (copiar ahí también los efectos de `proyectos/2026-11-15-finanzas-3d/sonidos/`).
+- Render: `proyectos/2026-11-15-alcanza/salida/narrado-v1.mp4`; con audio normalizado (−14 LUFS / −1.5 dBTP): `final-v1.mp4`.
 
 ## Qué sigue
 
+- Que el creador revise el reel de Alcanza. Pendientes que decide él: logo oficial (se armó uno con elementos de la app), si mantiene "yapeaste" en la locución (Yape es marca de terceros; no se muestra su logo ni UI, las notificaciones son genéricas), y grabar la voz con acento peruano (`--audio`).
+- Fuentes Baloo 2 y Nunito: los .ttf no se versionan y no hay script que los baje; en otra máquina hay que regenerarlos (fuente y método en `biblioteca/LICENCIAS.md`).
 - Que el creador revise el borrador y diga qué cambiar (personajes, escena, textos, duración, ritmo).
 - Que el creador revise `FinanzasNarrado` (y si quiere grabar su voz con el guion).
 - Que el creador revise `Finanzas3D` (personajes, ritmo, textos, sonidos, si quiere voz en off con su propia voz).
