@@ -48,7 +48,8 @@ const T = {
 	cierre: 28.0,
 };
 const VALOR_ANIO = [20075, 22083, 24291, 26720, 29392];
-const MONEDAS_POR_PESO = 1 / 1500; // altura de la torre ∝ dinero
+// altura de la torre: exagerada a partir de $15,000 para que se note cómo crece
+const monedasPara = (pesos: number) => Math.max(0, (pesos - 15000) / 380);
 
 // ---------- cámara por fotogramas clave ----------
 type Clave = {t: number; pos: V3; mira: V3};
@@ -58,7 +59,8 @@ const CAMARA: Clave[] = [
 	{t: 8.6, pos: [-0.2, 1.8, 6.2], mira: [-0.1, 0.9, 0]},
 	{t: 9.6, pos: [0.3, 2.3, 8.2], mira: [0.3, 1, 0]},
 	{t: 14.6, pos: [0.2, 1.9, 7.2], mira: [0.2, 1, 0]},
-	{t: 17.6, pos: [2.4, 2.4, 8.2], mira: [2.9, 1.2, -0.5]},
+	{t: 15.8, pos: [0.0, 2.0, 7.4], mira: [0.1, 1, 0]},
+	{t: 18.6, pos: [2.4, 2.4, 8.2], mira: [2.9, 1.2, -0.5]},
 	{t: 21.6, pos: [3.0, 2.2, 7.4], mira: [3.3, 1.3, -0.6]},
 	{t: 23.0, pos: [3.4, 3.4, 9.6], mira: [3.5, 1.8, -0.8]},
 	{t: 27.6, pos: [3.2, 3.6, 9.9], mira: [3.5, 2.0, -0.8]},
@@ -201,11 +203,11 @@ const Mundo: React.FC = () => {
 	const ultimoAnio = [...T.anios].reverse().find((a) => t >= a - 0.2);
 	const kAnio = ultimoAnio === undefined ? 1 : tramo(t, ultimoAnio - 0.2, ultimoAnio + 0.3, 0, 1, Easing.out(Easing.back(1.6)));
 	const valorTorre = valorPrevio + (valor - valorPrevio) * kAnio;
-	const cantidad = t < T.crece[0] ? 0 : tramo(t, T.crece[0], T.crece[1], 0, 1, Easing.out(Easing.cubic)) * valorTorre * MONEDAS_POR_PESO;
+	const cantidad = t < T.crece[0] ? 0 : tramo(t, T.crece[0], T.crece[1], 0, 1, Easing.out(Easing.cubic)) * monedasPara(valorTorre);
 	const brilloBanco = tramo(t, T.lanza[1] - 0.1, T.lanza[1] + 0.3, 0, 1) * (0.7 + 0.3 * Math.sin(t * 6));
 	const posTorre: V3 = [3.5, 0, 0.55];
 	const escalaFlecha = tramo(t, 19.6, 20.1, 0, 1, Easing.out(Easing.back(2.5)));
-	const altoTorre = cantidad * 0.075 + 0.3;
+	const altoTorre = cantidad * 0.06 + 0.3;
 
 	return (
 		<>
@@ -338,7 +340,7 @@ const ValorAnios: React.FC = () => {
 // ---------- sonido ----------
 const Sfx: React.FC<{en: number; nombre: string; vol?: number}> = ({en, nombre, vol = 0.8}) => (
 	<Sequence from={Math.round(en * FPS)} layout="none">
-		<Audio src={staticFile(`${SONIDOS}/${nombre}.wav`)} volume={vol} />
+		<Audio src={staticFile(`${SONIDOS}/${nombre}.wav`)} volume={vol * 0.6} />
 	</Sequence>
 );
 
@@ -424,7 +426,7 @@ export const FinanzasTresD: React.FC = () => {
 				<br />1 año: <Contador desde={19.3} de={18250} a={20075} dura={1.7} color="#5dff8f" />
 			</Texto>
 			<Texto desde={22.6} hasta={27.9} tam={96}>
-				Y si lo dejas 5 años…
+				Si lo dejas 5 años…
 				<br />
 				<ValorAnios />
 			</Texto>

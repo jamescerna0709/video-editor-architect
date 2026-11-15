@@ -5,6 +5,7 @@ import {Composition} from 'remotion';
 import {Reel} from './reel/Reel';
 import {EdicionBase, edicionVacia, type Edicion} from './esquema/edicion';
 import {Personajes3D} from './borradores/Personajes3D';
+import {FinanzasTresD, DURACION_FINANZAS} from './borradores/FinanzasTresD';
 
 /**
  * Una sola composición. La duración sale de la EDL (`duracion_s`) vía calculateMetadata,
@@ -28,5 +29,7 @@ export const RemotionRoot: React.FC = () => (
 	/>
 	{/* Borrador independiente: personajes 2D en escena 3D (no usa la EDL). */}
 	<Composition id="Personajes3D" component={Personajes3D} fps={30} width={1080} height={1920} durationInFrames={300} />
+	{/* Borrador independiente: educación financiera con personajes y mundo 3D. */}
+	<Composition id="Finanzas3D" component={FinanzasTresD} fps={30} width={1080} height={1920} durationInFrames={DURACION_FINANZAS} />
 	</>
 );
