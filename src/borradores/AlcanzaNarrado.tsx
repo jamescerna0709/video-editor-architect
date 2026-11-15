@@ -60,7 +60,7 @@ const tomas = (T: Tiempos): Toma[] => {
 	const lista: Omit<Toma, 'hasta'>[] = [
 		// domingo de noche: la sala, luego cerca de la cara
 		{desde: 0, set: 'sala', de: [3.4, 3.4, 10], a: [2.8, 2.9, 8.4], mira: [0.6, 1.6, -0.4], dura: 3.5},
-		{desde: en('gancho', 'semana'), set: 'sala', de: [1.9, 1.35, 1.9], a: [1.7, 1.3, 1.6], mira: [1.15, 1.05, -0.75]},
+		{desde: en('gancho', 'semana'), set: 'sala', de: [1.95, 1.55, 1.3], a: [1.75, 1.5, 0.95], mira: [1.15, 1.25, -0.8]},
 		// gastos hormiga en la calle
 		{desde: esc('hormiga').inicio, set: 'calle', de: [0.3, 3.6, 7.5], a: [0.2, 3.0, 6.2], mira: [0.2, 0.3, 0.3]},
 		{desde: en('hormiga', 'hormiga'), set: 'calle', de: [0.5, 0.6, 2.4], a: [0.45, 0.5, 2.0], mira: [0.2, 0.12, 0.5]},
@@ -100,10 +100,10 @@ type PropsSet = {T: Tiempos; t: number};
 
 const SetSala: React.FC<PropsSet> = ({T, t}) => (
 	<>
-		<LucesNoche />
+		<LucesNoche intensidad={0.8} />
 		<CasaCorte />
 		<Protagonista
-			position={[1.15, 0.2, -0.75]}
+			position={[1.15, 0.2, -0.95]}
 			sentado
 			conCelular={1}
 			animo={t >= T.en('gancho', 'saldo') ? 'confundido' : 'normal'}
@@ -201,7 +201,7 @@ const Mundo: React.FC<{T: Tiempos; lista: Toma[]}> = ({T, lista}) => {
 
 // ---------- capa 2D ----------
 // El celular va chico y arriba para que el subtítulo (62 % del alto) quede libre debajo.
-const CEL = {x: 540, y: 735, escala: 0.68};
+const CEL = {x: 540, y: 722, escala: 0.94}; // ~820 px de alto: de y≈310 a y≈1130
 
 const Logo: React.FC<{desde: number; hasta: number}> = ({desde, hasta}) => {
 	const frame = useCurrentFrame();
