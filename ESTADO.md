@@ -12,7 +12,7 @@ Estado: hay tres borradores 3D hechos en código; el principal es "FinanzasNarra
 - 2026-11-15: el creador pasó 3 reels de referencia (Instagram Dfue1S-ACmN, DfvqL4TgFc9, DfdTW8zBrqQ), bajados gratis con yt-dlp y medidos con `herramientas/estilo/referencia.ts --estilo finanzas-3d` (en `referencias/`, no se versiona). Estilo visto: narración de principio a fin, dioramas 3D low-poly (barrio mexicano, casas en corte), subtítulo de UNA palabra blanco al ~62 % de alto, etiquetas en mayúsculas amarillas, tarjetas blancas con borde negro y encabezado rojo, cámara lenta, 4.6–9.9 cortes/min (toma mediana 4.4–9.7 s, n=3 reels, fuente ritmo.json), 78–115 s.
 - Composición `FinanzasNarrado` (`src/borradores/FinanzasNarrado.tsx`): guion en `src/borradores/finanzas/guion.json`, escenarios 3D en `finanzas/escenarios.tsx`, capas 2D en `finanzas/capas.tsx`. Tomas, tarjetas, etiquetas y sonidos se amarran a palabras de la narración, así que se reacomoda si cambia la voz.
 - Voz: `npx tsx herramientas/borradores/voz-finanzas.ts --tts` (Piper `es_MX-ald-medium`, dominio público) → `proyectos/2026-11-15-finanzas-3d/voz/narracion.{wav,json}`. Con la voz del creador: `--audio <grabación>` (mismo guion). Después: `npx tsx herramientas/borradores/sonidos-finanzas.ts` (rehace `musica-larga.wav` con las escenas) y renderizar.
-- Render: `proyectos/2026-11-15-finanzas-3d/salida/narrado-v1.mp4`.
+- Render: `proyectos/2026-11-15-finanzas-3d/salida/narrado-v1.mp4`; con el audio normalizado a −14 LUFS / −1.5 dBTP (ffmpeg loudnorm): `final-v1.mp4`.
 
 ## Qué sigue
 
