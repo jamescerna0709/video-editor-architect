@@ -363,8 +363,11 @@ function golpe(): Estereo {
 
 type Acorde = { raiz: number; menor: boolean };
 
-function musica(): Estereo {
-	const DUR = 32;
+/**
+ * Música de fondo. `seccionEn(t)` dice qué parte suena en cada compás: A tranquila, B más oscura, C más enérgica.
+ * Por defecto: la pista de 32 s del reel corto (A 0-8.7 s, B 8.7-15.3 s, C después).
+ */
+function musica(DUR = 32, seccionEn?: (t: number) => 'A' | 'B' | 'C'): Estereo {
 	const BPM = 110;
 	const tiempo = 60 / BPM;
 	const compas = tiempo * 4;
@@ -378,7 +381,10 @@ function musica(): Estereo {
 	const Dm: Acorde = { raiz: 62, menor: true };
 	// A: compases 0-3 (0-8.7 s) · B, más oscuro: 4-6 (8.7-15.3 s) · C, más enérgico: 7 en adelante
 	const progresion = [C, F, C, G, Am, Dm, Am, C, G, F, G, C, F, G, C];
-	const seccion = (n: number) => (n < 4 ? 'A' : n < 7 ? 'B' : 'C');
+	const seccion = (n: number) => (seccionEn ? seccionEn(n * compas) : n < 4 ? 'A' : n < 7 ? 'B' : 'C');
+	// en la pista larga los acordes salen de la sección, no de la progresión fija del reel corto
+	const porSeccion: Record<'A' | 'B' | 'C', Acorde[]> = {A: [C, F, C, G], B: [Am, Dm, Am, G], C: [C, G, F, G]};
+	const acordeEn = (n: number) => (seccionEn ? porSeccion[seccion(n)][n % 4] : progresion[n]);
 
 	// tono k del arpegio del acorde (0 raíz, 1 tercera, 2 quinta, 3 octava…)
 	const tono = (a: Acorde, k: number) => a.raiz + [0, a.menor ? 3 : 4, 7][k % 3] + 12 * Math.floor(k / 3);
@@ -428,9 +434,9 @@ function musica(): Estereo {
 			return s * ataque(t, 0.003) * Math.min(1, (seg - t) / 0.02);
 		});
 
-	for (let n = 0; n < progresion.length && n * compas < DUR; n++) {
+	for (let n = 0; (seccionEn || n < progresion.length) && n * compas < DUR; n++) {
 		const t0 = n * compas;
-		const a = progresion[n];
+		const a = acordeEn(n);
 		const s = seccion(n);
 
 		// batería
@@ -504,4 +510,16 @@ guardarSfx('boing.wav', boing());
 guardarSfx('sube.wav', sube());
 guardarSfx('golpe.wav', golpe());
 escribirWav('musica.wav', musica());
+
+// Pista larga para el reel narrado: dura lo que la narración + 2 s y sus secciones siguen las escenas de
+// proyectos/2026-11-15-finanzas-3d/voz/narracion.json (B durante la inflación, C desde los intereses).
+const NARRACION = path.join(SALIDA, '..', 'voz', 'narracion.json');
+if (fs.existsSync(NARRACION)) {
+	const n = JSON.parse(fs.readFileSync(NARRACION, 'utf8')) as {duracion_s: number; escenas: {id: string; inicio: number}[]};
+	const inicio = (id: string) => n.escenas.find((e) => e.id === id)?.inicio ?? Infinity;
+	const b = inicio('inflacion'), c = inicio('intereses');
+	escribirWav('musica-larga.wav', musica(Math.ceil(n.duracion_s + 2), (t) => (t + 0.5 < b ? 'A' : t + 0.5 < c ? 'B' : 'C')));
+} else {
+	console.log('Sin narracion.json todavía: no hice musica-larga.wav (corre primero voz-finanzas.ts).');
+}
 console.log(`Listo: ${SALIDA}`);
