@@ -1,0 +1,30 @@
+{
+	"_nota": "Guion del reel de Alcanza (app del creador), en español de Perú. Las llaves {mostrar|decir} juntan varias palabras habladas en un solo subtítulo. Texto del creador casi literal; cambios: cifras escritas para que la voz las lea y el cierre reordenado ('descarga Alcanza y haz que tu dinero rinda').",
+	"idioma": "es-PE",
+	"escenas": [
+		{
+			"id": "gancho",
+			"texto": "Cobraste a fin de mes, yapeaste por aquí, yapeaste por allá... y a la semana siguiente estás mirando tu saldo con la misma cara de confusión que cuando intentas armar un mueble sin manual."
+		},
+		{
+			"id": "hormiga",
+			"texto": "El problema no es que ganes poco, caserito, ¡es que tus gastos hormiga se comen tu sueldo en silencio! {S/ 1|Un sol} por aquí, {S/ 10|diez soles} por allá, y cuando acuerdas, tu platita se esfumó sin dejar rastro."
+		},
+		{
+			"id": "alcanza",
+			"texto": "Para dejar de adivinar en qué se te fue el dinero, está Alcanza. La app de control personal donde registras cada movimiento al toque, organizas tus gastos y dejas de sufrir a mitad de mes preguntándote: ¿en qué gasté tanto?"
+		},
+		{
+			"id": "control",
+			"texto": "Olvídate de las hojas de Excel imposibles o de anotar en un cuaderno que vas a perder. Con Alcanza, llevar el control de tus finanzas es tan fácil como mandar un mensaje de texto. Ves claramente en qué categoría se te va más presupuesto."
+		},
+		{
+			"id": "fijas",
+			"texto": "Toma nota de estas {3|tres} fijas para recuperar el poder de tu billetera. Uno: registra al instante. No dejes para mañana el gasto que hiciste hoy en el chifa. Dos: ponle límites a tus categorías. Sabe cuánto puedes gastar en salidas sin descuidar lo importante. Tres: revisa tus hábitos. Mira tus reportes semanales y descubre dónde puedes recortar sin amargarte la vida."
+		},
+		{
+			"id": "cierre",
+			"texto": "Plata que no se anota, plata que se evapora. Toma el control de tus finanzas, descarga Alcanza, haz que tu dinero rinda, y deja que tus bolsillos respiren tranquilos."
+		}
+	]
+}

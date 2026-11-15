@@ -122,7 +122,7 @@ function fundidos(b: Estereo, entrada: number, salida: number): void {
 	}
 }
 
-function escribirWav(nombre: string, b: Estereo): void {
+function escribirWav(nombre: string, b: Estereo, carpeta = SALIDA): void {
 	const n = b.l.length;
 	const datos = n * 4;
 	const buf = Buffer.alloc(44 + datos);
@@ -144,7 +144,7 @@ function escribirWav(nombre: string, b: Estereo): void {
 		buf.writeInt16LE(a16(b.l[i]), 44 + i * 4);
 		buf.writeInt16LE(a16(b.r[i]), 46 + i * 4);
 	}
-	fs.writeFileSync(path.join(SALIDA, nombre), buf);
+	fs.writeFileSync(path.join(carpeta, nombre), buf);
 	console.log(`${nombre.padEnd(13)} ${(n / SR).toFixed(3)} s`);
 }
 
@@ -513,13 +513,28 @@ escribirWav('musica.wav', musica());
 
 // Pista larga para el reel narrado: dura lo que la narración + 2 s y sus secciones siguen las escenas de
 // proyectos/2026-11-15-finanzas-3d/voz/narracion.json (B durante la inflación, C desde los intereses).
+// Otro reel: --musica-para <narracion.json> --secciones B=<escena>,C=<escena> --destino <carpeta>
+const arg = (n: string) => { const i = process.argv.indexOf(n); return i > 0 ? process.argv[i + 1] : undefined; };
+const otra = arg('--musica-para');
+if (otra) {
+	const n = JSON.parse(fs.readFileSync(path.resolve(otra), 'utf8')) as {duracion_s: number; escenas: {id: string; inicio: number}[]};
+	const sec = Object.fromEntries((arg('--secciones') ?? 'B=inflacion,C=intereses').split(',').map((x) => x.split('=')));
+	const inicio = (id?: string) => n.escenas.find((e) => e.id === id)?.inicio ?? Infinity;
+	const b = inicio(sec.B), c = inicio(sec.C);
+	const destino = path.resolve(arg('--destino') ?? SALIDA);
+	fs.mkdirSync(destino, {recursive: true});
+	const pista = musica(Math.ceil(n.duracion_s + 2), (t) => (t + 0.5 < b ? 'A' : t + 0.5 < c ? 'B' : 'C'));
+	escribirWav('musica-larga.wav', pista, destino);
+	console.log(`Música para ${otra} → ${destino}`);
+}
+
 const NARRACION = path.join(SALIDA, '..', 'voz', 'narracion.json');
-if (fs.existsSync(NARRACION)) {
+if (!otra && fs.existsSync(NARRACION)) {
 	const n = JSON.parse(fs.readFileSync(NARRACION, 'utf8')) as {duracion_s: number; escenas: {id: string; inicio: number}[]};
 	const inicio = (id: string) => n.escenas.find((e) => e.id === id)?.inicio ?? Infinity;
 	const b = inicio('inflacion'), c = inicio('intereses');
 	escribirWav('musica-larga.wav', musica(Math.ceil(n.duracion_s + 2), (t) => (t + 0.5 < b ? 'A' : t + 0.5 < c ? 'B' : 'C')));
-} else {
+} else if (!otra) {
 	console.log('Sin narracion.json todavía: no hice musica-larga.wav (corre primero voz-finanzas.ts).');
 }
 console.log(`Listo: ${SALIDA}`);
