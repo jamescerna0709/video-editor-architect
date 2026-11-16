@@ -20,7 +20,7 @@ Estado: el reel principal es "AlcanzaNarrado" (~97 s, promo narrada de la app Al
 
 ## Qué sigue
 
-- Que el creador revise el reel de Alcanza. Pendientes que decide él: logo oficial (se armó uno con elementos de la app), si mantiene "yapeaste" en la locución (Yape es marca de terceros; no se muestra su logo ni UI, las notificaciones son genéricas), y grabar la voz con acento peruano (`--audio`).
+- Que el creador revise el reel de Alcanza. Pendientes que decide él: logo oficial (se armó uno con elementos de la app) y, si quiere otra voz, grabarla él (`--audio`); la sintética es es_MX-ald, la única latina con licencia libre.
 - Fuentes Baloo 2 y Nunito: los .ttf no se versionan y no hay script que los baje; en otra máquina hay que regenerarlos (fuente y método en `biblioteca/LICENCIAS.md`).
 - Que el creador revise el borrador y diga qué cambiar (personajes, escena, textos, duración, ritmo).
 - Que el creador revise `FinanzasNarrado` (y si quiere grabar su voz con el guion).
