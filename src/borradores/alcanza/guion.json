@@ -1,0 +1,30 @@
+{
+	"_nota": "Guion del reel de Alcanza (app del creador), en español neutro (2026-11-16: el creador pidió acento neutro y quitar 'caserito'; se quitaron también regionalismos peruanos: yapeaste, platita, fijas, chifa, al toque, cuando acuerdas). Las llaves {mostrar|decir} juntan varias palabras habladas en un solo subtítulo.",
+	"idioma": "es-419",
+	"escenas": [
+		{
+			"id": "gancho",
+			"texto": "Cobraste a fin de mes, pagaste con el celular por aquí, pagaste por allá... y a la semana siguiente estás mirando tu saldo con la misma cara de confusión que cuando intentas armar un mueble sin manual."
+		},
+		{
+			"id": "hormiga",
+			"texto": "El problema no es que ganes poco, ¡es que tus gastos hormiga se comen tu sueldo en silencio! {S/ 1|Un sol} por aquí, {S/ 10|diez soles} por allá, y cuando te das cuenta, tu dinero se esfumó sin dejar rastro."
+		},
+		{
+			"id": "alcanza",
+			"texto": "Para dejar de adivinar en qué se te fue el dinero, está Alcanza. La app de control personal donde registras cada movimiento al instante, organizas tus gastos y dejas de sufrir a mitad de mes preguntándote: ¿en qué gasté tanto?"
+		},
+		{
+			"id": "control",
+			"texto": "Olvídate de las hojas de Excel imposibles o de anotar en un cuaderno que vas a perder. Con Alcanza, llevar el control de tus finanzas es tan fácil como mandar un mensaje de texto. Ves claramente en qué categoría se te va más presupuesto."
+		},
+		{
+			"id": "fijas",
+			"texto": "Toma nota de estas {3|tres} claves para recuperar el control de tu billetera. Uno: registra al instante. No dejes para mañana el gasto que hiciste hoy en el almuerzo. Dos: ponle límites a tus categorías. Define cuánto puedes gastar en salidas sin descuidar lo importante. Tres: revisa tus hábitos. Mira tus reportes semanales y descubre dónde puedes recortar sin amargarte la vida."
+		},
+		{
+			"id": "cierre",
+			"texto": "Dinero que no se anota, dinero que se evapora. Toma el control de tus finanzas, descarga Alcanza, haz que tu dinero rinda y deja que tus bolsillos respiren tranquilos."
+		}
+	]
+}

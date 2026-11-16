@@ -5,10 +5,10 @@
  * El audio sale de audio.ts (misma carpeta) y se mezcla con ffmpeg (ver ESTADO.md).
  *
  * Windows: Remotion no puede crear symlinks del public/ (EPERM sin modo desarrollador) ni bajar su navegador, así que
- * usa un public/ propio del proyecto con solo la fuente que hace falta (se copia aquí si falta) y el Chrome instalado
+ * usa un public/ propio del proyecto con copias de biblioteca/fuentes (se copian aquí si faltan) y el Chrome instalado
  * (EDITOR_CHROME para otra ruta).
  */
-import {copyFileSync, existsSync, mkdirSync} from 'node:fs';
+import {cpSync, mkdirSync} from 'node:fs';
 import {dirname, join, resolve} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {bundle} from '@remotion/bundler';
@@ -19,13 +19,11 @@ const RAIZ = resolve(AQUI, '..', '..', '..');
 const PROYECTO = join(RAIZ, 'proyectos', '2026-11-13-papel-cortado');
 const CHROME = process.env.EDITOR_CHROME ?? 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
 
-// public/ propio: solo TikTok Sans ExtraBold (OFL-1.1) con su licencia.
-const FUENTE = join('biblioteca', 'fuentes', 'tiktok-sans');
+// public/ propio con copias reales de biblioteca/fuentes (todas OFL-1.1, con su licencia): PapelCortado usa TikTok
+// Sans, pero otras composiciones del bundle (AlcanzaNarrado) cargan Baloo 2 y Nunito al empezar y sin ellas falla.
+const FUENTES = join('biblioteca', 'fuentes');
 const PUBLICO = join(PROYECTO, 'public');
-mkdirSync(join(PUBLICO, FUENTE), {recursive: true});
-for (const f of ['TikTokSans-ExtraBold.ttf', 'OFL.txt']) {
-	if (!existsSync(join(PUBLICO, FUENTE, f))) copyFileSync(join(RAIZ, FUENTE, f), join(PUBLICO, FUENTE, f));
-}
+cpSync(join(RAIZ, FUENTES), join(PUBLICO, FUENTES), {recursive: true, force: false, errorOnExist: false, filter: (s) => !/\.(sh|md)$/.test(s)});
 
 const [modo, arg] = process.argv.slice(2);
 const serveUrl = await bundle({entryPoint: join(RAIZ, 'src', 'index.ts'), rootDir: RAIZ, publicDir: PUBLICO, enableCaching: true});

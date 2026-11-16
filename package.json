@@ -18,6 +18,8 @@
     "postinstall": "tsx herramientas/preparar-public.ts"
   },
   "dependencies": {
+    "@react-three/fiber": "9.3.0",
+    "@remotion/bundler": "4.0.532",
     "@remotion/captions": "4.0.532",
     "@remotion/cli": "4.0.532",
     "@remotion/fonts": "4.0.532",
@@ -25,13 +27,15 @@
     "@remotion/media": "4.0.532",
     "@remotion/media-utils": "4.0.532",
     "@remotion/renderer": "4.0.532",
-    "@remotion/bundler": "4.0.532",
+    "@remotion/three": "4.0.532",
     "@remotion/zod-types": "4.0.532",
     "@resvg/resvg-js": "2.6.2",
+    "@types/three": "0.178.1",
     "fontkit": "2.0.4",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "remotion": "4.0.532",
+    "three": "0.178.0",
     "zod": "4.5.4"
   },
   "devDependencies": {

@@ -1,0 +1,34 @@
+{
+	"_nota": "Guion del reel de finanzas narrado. Cada escena se dice en orden. Las llaves {mostrar|decir} juntan varias palabras habladas en un solo subtítulo: 'decir' es lo que se pronuncia y se alinea, 'mostrar' es lo que sale en pantalla. Cifras comprobadas: 50×365=18,250 · 18,250/1.05=17,381 · 18,250×1.10=20,075 · ×1.10 por año: 22,083 · 24,291 · 26,720 · 29,392.",
+	"idioma": "es-MX",
+	"escenas": [
+		{
+			"id": "gancho",
+			"texto": "Tu dinero se está encogiendo. Aunque no gastes ni un peso, cada año compra menos. Te explico por qué, y cómo evitarlo."
+		},
+		{
+			"id": "ahorro",
+			"texto": "Imagina que guardas {$50|cincuenta pesos} todos los días en una alcancía. Día uno, {$50|cincuenta}. Día diez, {$500|quinientos}. Al terminar el año, tienes {$18,250|dieciocho mil doscientos cincuenta pesos}. Felicidades, ya tienes un fondo."
+		},
+		{
+			"id": "inflacion",
+			"texto": "Pero hay un problema que no se ve: la inflación. Los precios suben un poquito cada año. Si la inflación es de {5%|cinco por ciento}, lo que hoy cuesta {$100|cien pesos}, el próximo año cuesta {$105|ciento cinco}. Tus billetes son los mismos, pero alcanzan para menos. En un año, tus {$18,250|dieciocho mil doscientos cincuenta} compran lo que hoy compran {$17,381|diecisiete mil trescientos ochenta y uno}. Perdiste casi {$900|novecientos pesos} sin gastar nada."
+		},
+		{
+			"id": "intereses",
+			"texto": "¿La salida? Poner tu dinero a trabajar. Hay cuentas de ahorro e inversión que te pagan intereses. Si una te paga {10%|diez por ciento} al año, tus {$18,250|dieciocho mil doscientos cincuenta} se vuelven {$20,075|veinte mil setenta y cinco}. Le ganaste a la inflación."
+		},
+		{
+			"id": "compuesto",
+			"texto": "Y aquí viene lo bueno: el interés compuesto. El segundo año ya no ganas solo sobre tu dinero, también sobre los intereses que ganaste. Año dos, {$22,083|veintidós mil ochenta y tres}. Año tres, {$24,291|veinticuatro mil doscientos noventa y uno}. Y en cinco años, sin meter un peso más, tienes {$29,392|veintinueve mil trescientos noventa y dos}."
+		},
+		{
+			"id": "revisa",
+			"texto": "Antes de elegir dónde meterlo, revisa tres cosas. Uno: que la institución esté regulada. Dos: cuánto te paga al año, ya con comisiones. Tres: si puedes sacar tu dinero cuando lo necesites."
+		},
+		{
+			"id": "cierre",
+			"texto": "Ahorrar es el primer paso. Ponerlo a trabajar es lo que hace la diferencia. El dinero quieto pierde valor. El dinero que trabaja, crece."
+		}
+	]
+}
