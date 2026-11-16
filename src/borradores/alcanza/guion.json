@@ -1,18 +1,18 @@
 {
-	"_nota": "Guion del reel de Alcanza (app del creador), en español de Perú. Las llaves {mostrar|decir} juntan varias palabras habladas en un solo subtítulo. Texto del creador casi literal; cambios: cifras escritas para que la voz las lea y el cierre reordenado ('descarga Alcanza y haz que tu dinero rinda').",
-	"idioma": "es-PE",
+	"_nota": "Guion del reel de Alcanza (app del creador), en español neutro (2026-11-16: el creador pidió acento neutro y quitar 'caserito'; se quitaron también regionalismos peruanos: yapeaste, platita, fijas, chifa, al toque, cuando acuerdas). Las llaves {mostrar|decir} juntan varias palabras habladas en un solo subtítulo.",
+	"idioma": "es-419",
 	"escenas": [
 		{
 			"id": "gancho",
-			"texto": "Cobraste a fin de mes, yapeaste por aquí, yapeaste por allá... y a la semana siguiente estás mirando tu saldo con la misma cara de confusión que cuando intentas armar un mueble sin manual."
+			"texto": "Cobraste a fin de mes, pagaste con el celular por aquí, pagaste por allá... y a la semana siguiente estás mirando tu saldo con la misma cara de confusión que cuando intentas armar un mueble sin manual."
 		},
 		{
 			"id": "hormiga",
-			"texto": "El problema no es que ganes poco, caserito, ¡es que tus gastos hormiga se comen tu sueldo en silencio! {S/ 1|Un sol} por aquí, {S/ 10|diez soles} por allá, y cuando acuerdas, tu platita se esfumó sin dejar rastro."
+			"texto": "El problema no es que ganes poco, ¡es que tus gastos hormiga se comen tu sueldo en silencio! {S/ 1|Un sol} por aquí, {S/ 10|diez soles} por allá, y cuando te das cuenta, tu dinero se esfumó sin dejar rastro."
 		},
 		{
 			"id": "alcanza",
-			"texto": "Para dejar de adivinar en qué se te fue el dinero, está Alcanza. La app de control personal donde registras cada movimiento al toque, organizas tus gastos y dejas de sufrir a mitad de mes preguntándote: ¿en qué gasté tanto?"
+			"texto": "Para dejar de adivinar en qué se te fue el dinero, está Alcanza. La app de control personal donde registras cada movimiento al instante, organizas tus gastos y dejas de sufrir a mitad de mes preguntándote: ¿en qué gasté tanto?"
 		},
 		{
 			"id": "control",
@@ -20,11 +20,11 @@
 		},
 		{
 			"id": "fijas",
-			"texto": "Toma nota de estas {3|tres} fijas para recuperar el poder de tu billetera. Uno: registra al instante. No dejes para mañana el gasto que hiciste hoy en el chifa. Dos: ponle límites a tus categorías. Sabe cuánto puedes gastar en salidas sin descuidar lo importante. Tres: revisa tus hábitos. Mira tus reportes semanales y descubre dónde puedes recortar sin amargarte la vida."
+			"texto": "Toma nota de estas {3|tres} claves para recuperar el control de tu billetera. Uno: registra al instante. No dejes para mañana el gasto que hiciste hoy en el almuerzo. Dos: ponle límites a tus categorías. Define cuánto puedes gastar en salidas sin descuidar lo importante. Tres: revisa tus hábitos. Mira tus reportes semanales y descubre dónde puedes recortar sin amargarte la vida."
 		},
 		{
 			"id": "cierre",
-			"texto": "Plata que no se anota, plata que se evapora. Toma el control de tus finanzas, descarga Alcanza, haz que tu dinero rinda, y deja que tus bolsillos respiren tranquilos."
+			"texto": "Dinero que no se anota, dinero que se evapora. Toma el control de tus finanzas, descarga Alcanza, haz que tu dinero rinda y deja que tus bolsillos respiren tranquilos."
 		}
 	]
 }

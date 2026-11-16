@@ -634,7 +634,7 @@ export const PantallaInicio: React.FC<{desde: number; saldo: number; gastado: nu
 						<Buddy animo="feliz" size={64} style={{marginTop: 10}} />
 					</div>
 					<div style={{display: 'flex', flexDirection: 'column', lineHeight: 1.15}}>
-						<b style={{fontFamily: FD, fontWeight: 800, fontSize: 27}}>¡Hola, caserito!</b>
+						<b style={{fontFamily: FD, fontWeight: 800, fontSize: 27}}>¡Hola!</b>
 						<span style={{fontSize: 17, color: C.muted, fontWeight: 600}}>Viernes 30 de mayo</span>
 					</div>
 				</div>

@@ -231,17 +231,17 @@ const Capas: React.FC<{T: Tiempos; fin: number}> = ({T, fin}) => {
 	const t = frame / FPS_ALCANZA;
 	const {en, esc} = T;
 	const fe = (id: string) => esc(id).fin;
-	const notis = tramo(t, en('gancho', 'yapeaste', 1), en('gancho', 'y'), 0, NOTIS.length, Easing.linear);
+	const notis = tramo(t, en('gancho', 'pagaste', 1), en('gancho', 'y'), 0, NOTIS.length, Easing.linear);
 	const tecleo = (desde: number, hasta: number, texto: string) => texto.slice(0, Math.round(tramo(t, desde, hasta, 0, texto.length, Easing.linear)));
 	const fijaDesde = en('fijas', 'uno') - 0.2;
 	return (
 		<>
 			{/* gancho */}
-			<Telefono desde={en('gancho', 'yapeaste', 1) - 0.4} hasta={en('gancho', 'estás')} {...CEL}>
-				<PantallaNotificaciones desde={en('gancho', 'yapeaste', 1)} items={NOTIS} visibles={notis} />
+			<Telefono desde={en('gancho', 'pagaste', 1) - 0.4} hasta={en('gancho', 'estás')} {...CEL}>
+				<PantallaNotificaciones desde={en('gancho', 'pagaste', 1)} items={NOTIS} visibles={notis} />
 			</Telefono>
-			<Etiqueta texto="FIN DE MES" desde={0.1} hasta={en('gancho', 'yapeaste', 1) - 0.4} x={540} y={330} pildora />
-			<Etiqueta texto="¿Y MI PLATA?" desde={en('gancho', 'saldo')} hasta={fe('gancho')} x={540} y={330} tam={84} />
+			<Etiqueta texto="FIN DE MES" desde={0.1} hasta={en('gancho', 'pagaste', 1) - 0.4} x={540} y={330} pildora />
+			<Etiqueta texto="¿Y MI DINERO?" desde={en('gancho', 'saldo')} hasta={fe('gancho')} x={540} y={330} tam={84} />
 
 			{/* gastos hormiga */}
 			<Etiqueta texto="GASTOS HORMIGA" desde={en('hormiga', 'gastos')} hasta={en('hormiga', 'S/ 1')} x={540} y={330} pildora />
@@ -258,7 +258,7 @@ const Capas: React.FC<{T: Tiempos; fin: number}> = ({T, fin}) => {
 					<PantallaCategorias desde={en('alcanza', 'organizas')} progreso={tramo(t, en('alcanza', 'organizas'), en('alcanza', 'mes'), 0, 1)} />
 				)}
 			</Telefono>
-			<Etiqueta texto="AL TOQUE" desde={en('alcanza', 'toque') - 0.1} hasta={en('alcanza', 'organizas')} x={540} y={250} pildora />
+			<Etiqueta texto="AL INSTANTE" desde={en('alcanza', 'instante') - 0.1} hasta={en('alcanza', 'organizas')} x={540} y={250} pildora />
 			<Etiqueta texto="¿EN QUÉ GASTÉ TANTO?" desde={en('alcanza', 'preguntándote')} hasta={fe('alcanza') + 0.3} x={540} y={250} tam={70} />
 
 			{/* control */}
@@ -274,7 +274,7 @@ const Capas: React.FC<{T: Tiempos; fin: number}> = ({T, fin}) => {
 			<Etiqueta texto="COMO UN MENSAJE" desde={en('control', 'fácil')} hasta={en('control', 'ves')} x={540} y={250} pildora />
 
 			{/* 3 fijas */}
-			<Tarjeta titulo="3 FIJAS" desde={esc('fijas').inicio} hasta={fijaDesde} y={640} ancho={820}>
+			<Tarjeta titulo="3 CLAVES" desde={esc('fijas').inicio} hasta={fijaDesde} y={640} ancho={820}>
 				<Lista desde={esc('fijas').inicio} items={['Registra al instante', 'Ponle límites a tus categorías', 'Revisa tus hábitos']} marcados={0} />
 			</Tarjeta>
 			<Etiqueta texto="1 · REGISTRA AL INSTANTE" desde={fijaDesde} hasta={en('fijas', 'dos')} x={540} y={250} tam={60} pildora />
@@ -282,7 +282,7 @@ const Capas: React.FC<{T: Tiempos; fin: number}> = ({T, fin}) => {
 			<Etiqueta texto="3 · REVISA TUS HÁBITOS" desde={en('fijas', 'tres')} hasta={fe('fijas')} x={540} y={250} tam={60} pildora />
 			<Telefono desde={fijaDesde + 0.1} hasta={fe('fijas') + 0.3} {...CEL}>
 				{t < en('fijas', 'dos') ? (
-					<PantallaAnotar desde={fijaDesde} monto={tecleo(en('fijas', 'gasto'), en('fijas', 'chifa'), '18.00')} categoria="Comida" guardado={tramo(t, en('fijas', 'chifa') + 0.2, en('fijas', 'chifa') + 0.6, 0, 1)} />
+					<PantallaAnotar desde={fijaDesde} monto={tecleo(en('fijas', 'gasto'), en('fijas', 'almuerzo'), '18.00')} categoria="Comida" guardado={tramo(t, en('fijas', 'almuerzo') + 0.2, en('fijas', 'almuerzo') + 0.6, 0, 1)} />
 				) : t < en('fijas', 'tres') ? (
 					<PantallaLimites desde={en('fijas', 'dos')} progreso={tramo(t, en('fijas', 'dos'), en('fijas', 'salidas'), 0, 1)} />
 				) : (
@@ -291,7 +291,7 @@ const Capas: React.FC<{T: Tiempos; fin: number}> = ({T, fin}) => {
 			</Telefono>
 
 			{/* cierre */}
-			<Etiqueta texto="PLATA QUE NO SE ANOTA…" desde={esc('cierre').inicio} hasta={en('cierre', 'evapora')} x={540} y={330} tam={64} />
+			<Etiqueta texto="DINERO QUE NO SE ANOTA…" desde={esc('cierre').inicio} hasta={en('cierre', 'evapora')} x={540} y={330} tam={64} />
 			<Etiqueta texto="…SE EVAPORA" desde={en('cierre', 'evapora')} hasta={en('cierre', 'descarga')} x={540} y={330} tam={84} />
 			<TarjetaCierre desde={en('cierre', 'descarga') - 0.2} hasta={fin + 5} />
 		</>
@@ -307,11 +307,11 @@ const Sfx: React.FC<{en: number; nombre: string; vol?: number}> = ({en, nombre, 
 
 const Sonidos: React.FC<{n: Narracion; T: Tiempos; lista: Toma[]}> = ({n, T, lista}) => {
 	const {en, esc} = T;
-	const ini = en('gancho', 'yapeaste', 1);
+	const ini = en('gancho', 'pagaste', 1);
 	const fin = en('gancho', 'y');
 	const notis = NOTIS.map((_, i) => ini + ((fin - ini) * (i + 0.5)) / NOTIS.length);
 	const pops = [
-		0.1, en('gancho', 'saldo'), en('hormiga', 'gastos'), en('hormiga', 'esfumó'), en('alcanza', 'toque'), en('alcanza', 'preguntándote'),
+		0.1, en('gancho', 'saldo'), en('hormiga', 'gastos'), en('hormiga', 'esfumó'), en('alcanza', 'instante'), en('alcanza', 'preguntándote'),
 		en('control', 'excel'), en('control', 'cuaderno'), en('control', 'fácil'), esc('fijas').inicio, en('fijas', 'uno'), en('fijas', 'dos'),
 		en('fijas', 'tres'), esc('cierre').inicio, en('cierre', 'evapora'),
 	];
@@ -335,7 +335,7 @@ const Sonidos: React.FC<{n: Narracion; T: Tiempos; lista: Toma[]}> = ({n, T, lis
 			<Sfx en={en('alcanza', 'alcanza')} nombre="sube" vol={0.4} />
 			<Sfx en={en('control', 'imposibles') + 0.2} nombre="golpe" vol={0.35} />
 			<Sfx en={en('control', 'texto') + 0.3} nombre="kaching" vol={0.35} />
-			<Sfx en={en('fijas', 'chifa') + 0.3} nombre="kaching" vol={0.35} />
+			<Sfx en={en('fijas', 'almuerzo') + 0.3} nombre="kaching" vol={0.35} />
 			<Sfx en={en('cierre', 'descarga') - 0.1} nombre="sube" vol={0.4} />
 		</>
 	);
