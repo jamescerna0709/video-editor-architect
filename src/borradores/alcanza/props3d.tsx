@@ -5,7 +5,7 @@
 // Convención: el origen de cada modelo está en su base (y = 0) y mira hacia +Z. Unidades ≈ metros.
 //
 // Marca: tinta #1E1E1E · salvia #6B9080 · terracota #D96B52 · miel #E9C46A · rojo #D9482F
-// (la mascota usa gorro rojo con pompón y bufanda roja).
+// (la mascota usa gorro rojo con pompón, camisa crema y jeans).
 import {useEffect, useMemo} from 'react';
 import {useCurrentFrame} from 'remotion';
 import * as THREE from 'three';
@@ -165,9 +165,6 @@ const matMapa = (clave: string, tex: () => THREE.Texture, o: {r?: number; lado?:
 
 const B: React.FC<{p: V3; s: V3; c?: string; m?: THREE.Material; rot?: V3; o?: OpcMat; sombra?: boolean}> = ({p, s, c = '#cccccc', m, rot, o, sombra = true}) => (
 	<mesh geometry={G.caja()} material={m ?? mat(c, o)} position={p} scale={s} rotation={rot} castShadow={sombra} receiveShadow />
-);
-const R: React.FC<{p: V3; s: V3; r: number; c?: string; m?: THREE.Material; rot?: V3; o?: OpcMat}> = ({p, s, r, c = '#cccccc', m, rot, o}) => (
-	<mesh geometry={G.redonda(s[0], s[1], s[2], r)} material={m ?? mat(c, o)} position={p} rotation={rot} castShadow receiveShadow />
 );
 const Cil: React.FC<{p: V3; r: number; h: number; c?: string; m?: THREE.Material; seg?: number; rot?: V3; o?: OpcMat}> = ({p, r, h, c = '#cccccc', m, seg = 24, rot, o}) => (
 	<group position={p} rotation={rot}>
@@ -336,7 +333,7 @@ const texInterrogacion = () =>
 
 /**
  * Mascota de Alcanza en el estilo de bloques de `Persona` (≈1.85 de alto con el pompón, mira a +Z):
- * gorro rojo con pompón, bufanda roja, camisa crema y jeans. Hombros a y ≈ 1.36, cara a y ≈ 1.56.
+ * gorro rojo con pompón, camisa crema con cuello y jeans. Hombros a y ≈ 1.36, cara a y ≈ 1.56.
  * Sentado: la cadera queda a y ≈ 0.53 y las rodillas ~0.42 hacia +Z; coloca el origen sobre el
  * asiento (p. ej. en el centro del sillón) a la altura del piso.
  */
@@ -497,18 +494,20 @@ export const Protagonista: React.FC<ProtagonistaProps> = ({
 					))}
 					<B p={[0.13, 1.25, 0.141]} s={[0.1, 0.08, 0.006]} c="#e7d9bd" sombra={false} />
 				</group>
-				{/* cuello + bufanda roja */}
-				<Cil p={[0, 1.38, 0]} r={0.06} h={0.08} m={piel} seg={12} />
-				<mesh geometry={G.toro(0.095, 0.045, Math.PI * 2, 10, 20)} material={rojo} position={[0, 1.41, 0.005]} rotation={[Math.PI / 2 + 0.12, 0, 0]} scale={[1.1, 1, 1]} castShadow />
-				<group position={[0.09, 1.37, 0.13]} rotation={[0.15 + (camina ? Math.sin(ph) * 0.08 : 0), 0, 0.18 + Math.sin(frame * 0.1 + fase) * 0.03]}>
-					<mesh geometry={G.redonda(0.09, 0.24, 0.035, 0.015)} material={rojo} position={[0, -0.11, 0]} castShadow />
-					{[-0.07, -0.15].map((y) => (
-						<B key={y} p={[0, y, 0]} s={[0.092, 0.018, 0.037]} m={rojoOscuro} sombra={false} />
-					))}
-					{[-0.03, -0.01, 0.01, 0.03].map((x) => (
-						<B key={x} p={[x, -0.245, 0]} s={[0.012, 0.03, 0.02]} m={rojo} sombra={false} />
-					))}
-				</group>
+				{/* cuello con cuello de camisa (sin bufanda) */}
+				<Cil p={[0, 1.37, 0]} r={0.062} h={0.09} m={piel} seg={14} />
+				<mesh geometry={G.toro(0.085, 0.022, Math.PI * 2, 8, 22)} material={camisa} position={[0, 1.415, -0.005]} rotation={[Math.PI / 2, 0, 0]} scale={[1.15, 1.05, 1]} castShadow />
+				{[-1, 1].map((l) => (
+					<mesh
+						key={l}
+						geometry={G.redonda(0.1, 0.075, 0.016, 0.006)}
+						material={camisa}
+						position={[l * 0.05, 1.395, 0.105]}
+						rotation={[-0.35, l * 0.35, l * 0.55]}
+						castShadow
+					/>
+				))}
+				<Esf p={[0, 1.37, 0.142]} r={[0.012, 0.012, 0.005]} c="#c9b48d" seg={8} sombra={false} />
 				{/* cabeza (pivote en el cuello) */}
 				<group position={[0, 1.42, 0]} rotation={[miraAbajo, 0, inclinacion]}>
 					<group position={[0, 0.14, 0]}>
@@ -783,62 +782,151 @@ export type BilleteraProps = {
 	vacia?: number;
 };
 
+// cuero con grano suave y costura punteada a `margen` px del borde (en un lienzo de w×h)
+const texCuero = (w: number, h: number, base: string, margen: number, semilla: number, soloArriba = false) =>
+	texFija(`cuero|${w}|${h}|${base}|${margen}|${semilla}|${soloArriba}`, () =>
+		lienzo(w, h, (ctx) => {
+			ctx.fillStyle = base;
+			ctx.fillRect(0, 0, w, h);
+			const r = rng(semilla);
+			for (let i = 0; i < (w * h) / 90; i++) {
+				ctx.fillStyle = r() > 0.5 ? 'rgba(0,0,0,0.07)' : 'rgba(255,255,255,0.05)';
+				ctx.fillRect(r() * w, r() * h, 2 + r() * 3, 2 + r() * 3);
+			}
+			// borde ligeramente más oscuro
+			ctx.strokeStyle = 'rgba(40,18,6,0.35)';
+			ctx.lineWidth = margen * 0.5;
+			ctx.strokeRect(0, 0, w, h);
+			ctx.strokeStyle = '#f1dcae';
+			ctx.lineWidth = Math.max(3, margen * 0.28);
+			ctx.lineCap = 'round';
+			ctx.setLineDash([margen * 0.55, margen * 0.4]);
+			ctx.beginPath();
+			if (soloArriba) {
+				ctx.moveTo(margen * 0.6, margen);
+				ctx.lineTo(w - margen * 0.6, margen);
+			} else ctx.rect(margen, margen, w - margen * 2, h - margen * 2);
+			ctx.stroke();
+		}),
+	);
+
+// billete partido en dos mitades (izquierda/derecha) para doblarlo en la V de la billetera
+const texBilleteMitad = (color: 'verde' | 'teal', lado: 0 | 1) =>
+	texFija(`billeteMitad|${color}|${lado}`, () => {
+		const t = lienzo(256, 128, (ctx) => {
+			const [fondo, borde, claro, tinta] = color === 'verde' ? ['#7fc48a', '#3f8a52', '#d7efd5', '#2f6e3f'] : ['#5fbfae', '#2c7f73', '#d2f0ea', '#1f6158'];
+			ctx.fillStyle = fondo;
+			ctx.fillRect(0, 0, 256, 128);
+			ctx.strokeStyle = borde;
+			ctx.lineWidth = 8;
+			ctx.strokeRect(10, 10, 236, 108);
+			ctx.fillStyle = claro;
+			ctx.beginPath();
+			ctx.ellipse(128, 64, 36, 36, 0, 0, Math.PI * 2);
+			ctx.fill();
+			ctx.font = `900 38px ${FUENTE}`;
+			ctx.textAlign = 'center';
+			ctx.textBaseline = 'middle';
+			ctx.fillStyle = tinta;
+			ctx.fillText('S/', 128, 66);
+			ctx.font = `800 26px ${FUENTE}`;
+			ctx.fillText(color === 'verde' ? '10' : '20', 40, 34);
+			ctx.fillText(color === 'verde' ? '10' : '20', 216, 96);
+		});
+		t.repeat.set(0.5, 1);
+		t.offset.set(lado * 0.5, 0);
+		return t;
+	});
+
 /**
- * Billetera de cuero abierta (≈0.48 de ancho en X): mitad delantera en el piso con tarjetas,
- * mitad trasera levantada (≈0.2 de alto) y billetes asomando por el lomo, de cara a +Z.
+ * Billetera bifold de cuero café, abierta en V (≈105° entre las mitades) y parada sobre su canto en
+ * y = 0, con el lomo atrás y la abertura hacia +Z para que se vea el interior: ranuras con tarjetas
+ * (salvia, terracota, miel), costuras punteadas y billetes verdes/turquesa saliendo por arriba del
+ * compartimento de billetes. ≈0.53 de ancho, ≈0.27 de alto (≈0.37 con billetes). Dos monedas al pie.
+ * `vacia` 0..1: los billetes se hunden uno por uno; vacía sigue leyéndose como billetera abierta.
  */
 export const Billetera: React.FC<BilleteraProps> = ({position = [0, 0, 0], rotationY = 0, escala = 1, vacia = 0}) => {
-	const cuero = mat('#8a5434', {r: 0.62});
-	const forro = mat('#6b3d24', {r: 0.8});
-	const costura = mat('#e9d3a8', {r: 0.9});
-	const W = 0.48;
-	const D = 0.2;
-	const billetes = [
-		{x: -0.06, rz: 0.1, sube: 0.07},
-		{x: 0.03, rz: -0.04, sube: 0.085},
-		{x: 0.1, rz: -0.13, sube: 0.06},
-	];
+	const L = 0.32; // ancho de cada mitad
+	const H = 0.27; // alto
+	const T = 0.022; // grosor del cuero
+	const ABRE = 0.66; // giro de cada mitad desde el plano frontal (≈38°, 105° entre mitades)
+	const cueroBase = '#8a5232';
+	const cuero = mat(cueroBase, {r: 0.6});
+	const cueroOsc = mat('#6e3f25', {r: 0.65});
+	const interior = matMapa('cueroInt', () => texCuero(340, 270, '#7a4529', 14, 3), {r: 0.7});
+	const exterior = matMapa('cueroExt', () => texCuero(340, 270, cueroBase, 14, 9), {r: 0.6});
 	const v = clamp01(vacia);
-	const mitad = (atras: boolean) => (
-		<group position={[0, 0.012, 0]} rotation={[atras ? 1.15 : 0, 0, 0]}>
-			<group position={[0, 0, atras ? -D / 2 : D / 2]}>
-				<mesh geometry={G.redonda(W, 0.024, D, 0.011)} material={cuero} castShadow receiveShadow />
-				<B p={[0, 0.0125, 0]} s={[W - 0.03, 0.002, D - 0.03]} m={forro} sombra={false} />
-				{/* costuras */}
-				{[-1, 1].map((s) => (
-					<B key={s} p={[s * (W / 2 - 0.012), 0.0135, 0]} s={[0.004, 0.002, D - 0.03]} m={costura} sombra={false} />
-				))}
-				<B p={[0, 0.0135, (atras ? -1 : 1) * (D / 2 - 0.012)]} s={[W - 0.03, 0.002, 0.004]} m={costura} sombra={false} />
-				{!atras
-					? [MARCA.terracota, MARCA.salvia, MARCA.miel].map((c, i) => (
-							<group key={c} position={[-0.095 + i * 0.012, 0.016 + i * 0.004, -0.04 + i * 0.03]}>
-								<R p={[0, 0, 0]} s={[0.17, 0.004, 0.1]} r={0.002} c={c} o={{r: 0.5}} />
-								<B p={[0.04, 0.003, -0.025]} s={[0.04, 0.001, 0.03]} c={i === 2 ? '#c99a2e' : '#f4f1ea'} sombra={false} />
-							</group>
-						))
-					: null}
-				{/* bolsillo de tarjetas de la mitad delantera */}
-				{!atras ? <mesh geometry={G.redonda(0.2, 0.012, 0.13, 0.005)} material={cuero} position={[-0.11, 0.02, 0.025]} castShadow /> : null}
-				{!atras ? <mesh geometry={G.redonda(0.18, 0.012, 0.13, 0.005)} material={forro} position={[0.12, 0.018, 0.025]} castShadow /> : null}
-			</group>
+	// billetes: [mitad izquierda/derecha comparten el mismo billete doblado]
+	const billetes: {color: 'verde' | 'teal'; sube: number; rz: number; dx: number}[] = [
+		{color: 'verde', sube: 0.1, rz: 0.12, dx: -0.03},
+		{color: 'teal', sube: 0.085, rz: -0.1, dx: 0.025},
+		{color: 'verde', sube: 0.068, rz: 0.06, dx: 0.0},
+		{color: 'teal', sube: 0.05, rz: -0.14, dx: -0.015},
+	];
+	const BH = 0.15; // alto del billete
+	// ranuras: [alto del borde superior, color de la tarjeta]
+	const ranuras: Record<number, [number, string][]> = {
+		[-1]: [
+			[0.2, MARCA.salvia],
+			[0.155, MARCA.terracota],
+			[0.11, MARCA.miel],
+		],
+		[1]: [
+			[0.2, MARCA.miel],
+			[0.155, MARCA.salvia],
+			[0.11, MARCA.terracota],
+		],
+	};
+	const tiraTex = (alto: number, i: number) => matMapa(`tira|${alto}|${i}`, () => texCuero(320, Math.round(320 * (alto / (L - 0.03))), i % 2 ? '#93593a' : '#9a5f3e', 12, 20 + i, true), {r: 0.6});
+	const mitad = (lado: -1 | 1) => (
+		<group key={lado} rotation={[0, -lado * ABRE, 0]}>
+			{/* panel de cuero; cara interior = +Z local */}
+			<mesh geometry={G.redonda(L, H, T, 0.008)} material={cuero} position={[(lado * L) / 2, H / 2, 0]} castShadow receiveShadow />
+			<mesh geometry={G.plano()} material={exterior} position={[(lado * L) / 2, H / 2, -T / 2 - 0.0008]} rotation={[0, Math.PI, 0]} scale={[L - 0.006, H - 0.006, 1]} />
+			<mesh geometry={G.plano()} material={interior} position={[(lado * L) / 2, H / 2, T / 2 + 0.0008]} scale={[L - 0.006, H - 0.006, 1]} />
+			{/* billetes (detrás de las ranuras), mitad del billete doblado en esta hoja */}
+			{billetes.map((b, i) => {
+				const k = suave((v - i * 0.2) / 0.3);
+				if (k >= 0.999) return null;
+				const y = 0.11 + BH / 2 + b.sube - k * (b.sube + 0.12);
+				const ancho = (L - 0.03) * (1 - Math.abs(b.rz) * 0.3);
+				return (
+					<group key={i} position={[lado * (0.012 + ancho / 2) + b.dx, y, T / 2 + 0.003 + i * 0.0025]} rotation={[0, 0, b.rz * (lado < 0 ? 1 : -1) * 0.5]}>
+						<mesh geometry={G.caja()} material={mat(b.color === 'verde' ? '#5fae6d' : '#3fa192', {r: 0.9})} scale={[ancho, BH, 0.0015]} castShadow />
+						<mesh geometry={G.plano()} material={matMapa(`bm|${b.color}|${lado}`, () => texBilleteMitad(b.color, lado < 0 ? 0 : 1), {r: 0.9})} position={[0, 0, 0.001]} scale={[ancho, BH, 1]} />
+					</group>
+				);
+			})}
+			{/* bolsa de ranuras: fondo + tiras escalonadas, cada una con su tarjeta asomando */}
+			<mesh geometry={G.caja()} material={cueroOsc} position={[(lado * L) / 2, 0.11, T / 2 + 0.016]} scale={[L - 0.03, 0.2, 0.003]} castShadow receiveShadow />
+			{ranuras[lado].map(([alto, color], i) => {
+				const z = T / 2 + 0.02 + i * 0.006;
+				return (
+					<group key={i}>
+						{/* tarjeta asomando */}
+						<mesh geometry={G.redonda(L - 0.075, 0.1, 0.003, 0.008)} material={mat(color, {r: 0.45})} position={[lado * (L / 2 + 0.008), alto - 0.035, z - 0.003]} castShadow />
+						<B p={[lado * (L / 2 + 0.008), alto + 0.007, z - 0.001]} s={[L - 0.09, 0.006, 0.001]} c="#ffffff" o={{r: 0.5, o: 0.35}} sombra={false} />
+						{/* tira de cuero de la ranura */}
+						<mesh geometry={G.redonda(L - 0.03, alto - 0.012, 0.004, 0.003)} material={cuero} position={[(lado * L) / 2, (alto - 0.012) / 2 + 0.006, z]} castShadow receiveShadow />
+						<mesh geometry={G.plano()} material={tiraTex(alto - 0.012, i)} position={[(lado * L) / 2, (alto - 0.012) / 2 + 0.006, z + 0.0021]} scale={[L - 0.032, alto - 0.014, 1]} />
+					</group>
+				);
+			})}
 		</group>
 	);
 	return (
 		<group position={position} rotation={[0, rotationY, 0]} scale={escala}>
-			{mitad(false)}
-			{mitad(true)}
-			{/* lomo */}
-			<mesh geometry={G.cil(12)} material={cuero} position={[0, 0.014, 0]} rotation={[0, 0, Math.PI / 2]} scale={[0.028, W, 0.028]} castShadow />
-			{/* billetes asomando, recargados en la mitad trasera */}
-			{billetes.map((b, i) => {
-				const k = suave((v - i * 0.25) / 0.35);
-				if (k >= 0.999) return null;
-				return (
-					<group key={i} position={[b.x, 0.02 - k * 0.12, -0.02 - i * 0.008]} rotation={[-0.42, 0, b.rz]} scale={1 - k * 0.6}>
-						<BilletePlano w={0.26} h={0.15} p={[0, 0.075 + b.sube, 0]} />
-					</group>
-				);
-			})}
+			{/* lomo (doblez) */}
+			<Cil p={[0, 0, -0.004]} r={0.017} h={H} m={cuero} seg={14} />
+			{mitad(-1)}
+			{mitad(1)}
+			{/* monedas al pie */}
+			<group position={[-0.06, 0.004, 0.33]} rotation={[-Math.PI / 2, 0, 0]}>
+				<MonedaSol radio={0.045} />
+			</group>
+			<group position={[0.07, 0.04, 0.34]} rotation={[-0.45, 0.3, 0]}>
+				<MonedaSol radio={0.042} />
+			</group>
 		</group>
 	);
 };

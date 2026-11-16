@@ -64,7 +64,7 @@ const tomas = (T: Tiempos): Toma[] => {
 		// gastos hormiga en la calle
 		{desde: esc('hormiga').inicio, set: 'calle', de: [0.3, 3.6, 7.5], a: [0.2, 3.0, 6.2], mira: [0.2, 0.3, 0.3]},
 		{desde: en('hormiga', 'hormiga'), set: 'calle', de: [0.5, 0.6, 2.4], a: [0.45, 0.5, 2.0], mira: [0.2, 0.12, 0.5]},
-		{desde: en('hormiga', 'cuando'), set: 'calle', de: [-0.7, 0.9, 2.3], a: [-0.8, 0.8, 1.9], mira: [-1.2, 0.15, 0.8]},
+		{desde: en('hormiga', 'cuando'), set: 'calle', de: [-0.35, 1.0, 2.5], a: [-0.45, 0.9, 2.15], mira: [-0.85, 0.17, 0.8]},
 		// entra Alcanza: el protagonista con el celular
 		{desde: esc('alcanza').inicio, set: 'app', de: [0.2, 2.0, 5.2], a: [0.1, 1.8, 4.2], mira: [0, 1.3, 0.5]},
 		// control: adiós Excel y cuaderno, luego caminando
@@ -118,8 +118,8 @@ const SetCalle: React.FC<PropsSet> = ({T, t}) => {
 		<>
 			<Luces />
 			<Barrio />
-			<Billetera position={[-1.2, 0, 0.8]} rotationY={0.4} vacia={vacia} />
-			<FilaHormigas desde={[-1.0, 0, 0.8]} hasta={[1.6, 0, 0.2]} cantidad={9} progreso={tramo(t, e.inicio, e.fin, 0.1, 1, Easing.linear)} />
+			<Billetera position={[-0.85, 0, 0.8]} rotationY={0.4} vacia={vacia} />
+			<FilaHormigas desde={[-0.65, 0, 0.8]} hasta={[1.6, 0, 0.2]} cantidad={9} progreso={tramo(t, e.inicio, e.fin, 0.1, 1, Easing.linear)} />
 			<HoyoHormiga position={[1.6, 0, 0.2]} />
 			<TazaCafe position={[-0.3, 0, -0.5]} />
 			<BolsaDelivery position={[0.6, 0, -0.7]} rotationY={-0.3} />
