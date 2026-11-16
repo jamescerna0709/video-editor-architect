@@ -30,6 +30,7 @@ Estado: repo unificado en el fork de James (jamescerna0709/video-editor-architec
 - Voz: `npx tsx herramientas/borradores/voz-finanzas.ts --tts` (Piper `es_MX-ald-medium`, dominio público) o `--audio <grabación>` con la voz del creador; alinea por palabra.
 - 2026-11-15: reel de Alcanza (app del creador): `src/borradores/AlcanzaNarrado.tsx`, guion en `alcanza/guion.json`, celular con las pantallas de la app en `alcanza/telefono.tsx`, objetos 3D en `alcanza/props3d.tsx`, cámara de mira fija.
 - 2026-11-16: correcciones: español neutro, billetera bifold de cuero, sin bufanda. Render: `proyectos/2026-11-15-alcanza/salida/final-v2.mp4` (95 s).
+- 2026-11-16: voz del creador (de su propio generador) en `proyectos/2026-11-15-alcanza/voz-origen/voz_alcanza.mp3`, alineada con `voz-finanzas.ts --audio` (81.6 s, 250/250 palabras); la voz sintética quedó en `voz-tts/`. Render: `final-v3.mp4` (84 s), en la sesión de la nube.
 
 ### Unificación (2026-11-16)
 - La carpeta local venía del repo original (Hainrixz) y el fork de James tenía los reels 3D en la rama `claude/great-einstein-8fc4wj`. Se juntaron: `origin` = fork de James, `upstream` = repo original. Identidad de git local: James <jamescerna0709@users.noreply.github.com> (sin su correo real).
@@ -44,7 +45,7 @@ Estado: repo unificado en el fork de James (jamescerna0709/video-editor-architec
 - Arreglar `herramientas/render.ts` para Windows (symlinks de public/ y navegador) antes del primer reel con crudo.
 - Paso 5 de /empezar: pedir un crudo y correr `/editar` con `jamesr-cl-oficial`.
 - Resolver las fuentes que faltan (Inter, JetBrains Mono, Press Start 2P, Instrument Serif, Anton, Caveat; y Baloo 2 + Nunito de los reels 3D: no hay script que las baje, método en `biblioteca/LICENCIAS.md`).
-- Que James revise los reels 3D (Alcanza, FinanzasNarrado, Finanzas3D, Personajes3D) y decida logo oficial y voz.
+- Que James revise los reels 3D (Alcanza v3 ya con su voz, FinanzasNarrado, Finanzas3D, Personajes3D) y decida el logo oficial de Alcanza.
 - Elegir fuentes de SFX permitidas (`/sfx`).
 - Opcional: la escena de "HOY" del papel cortado se queda ~1.7 s quieta después de la voz; medir los reels De5CCmGOaPy y De2XGAORTJb.
 
