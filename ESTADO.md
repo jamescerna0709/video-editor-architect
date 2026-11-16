@@ -16,6 +16,7 @@ Estado: el reel principal es "AlcanzaNarrado" (~97 s, promo narrada de la app Al
 - 2026-11-15: reel de Alcanza (app del creador): guion del creador en `src/borradores/alcanza/guion.json` (español de Perú, casi literal), composición `AlcanzaNarrado` (`src/borradores/AlcanzaNarrado.tsx`), celular con las pantallas de la app en `alcanza/telefono.tsx` (copiadas de su artifact: cómic sobre papel crema, salvia/terracota/miel, Baloo 2 + Nunito, compañero y frasco), objetos 3D en `alcanza/props3d.tsx`. Cámara nueva: mira fija, acercamiento corto y quieta (el creador notó que en el reel anterior la cámara se desviaba).
 - Voz: `npx tsx herramientas/borradores/voz-finanzas.ts --tts --guion src/borradores/alcanza/guion.json --salida proyectos/2026-11-15-alcanza/voz` (94.1 s). Música: `npx tsx herramientas/borradores/sonidos-finanzas.ts --musica-para proyectos/2026-11-15-alcanza/voz/narracion.json --secciones B=hormiga,C=alcanza --destino proyectos/2026-11-15-alcanza/sonidos` (copiar ahí también los efectos de `proyectos/2026-11-15-finanzas-3d/sonidos/`).
 - Render: `proyectos/2026-11-15-alcanza/salida/narrado-v1.mp4`; con audio normalizado (−14 LUFS / −1.5 dBTP): `final-v1.mp4`.
+- 2026-11-16: correcciones del creador: español neutro (sin "caserito" ni regionalismos), billetera rehecha (bifold de cuero), sin bufanda. Render: `proyectos/2026-11-15-alcanza/salida/final-v2.mp4` (95 s).
 
 ## Qué sigue
 
