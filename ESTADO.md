@@ -17,10 +17,11 @@ Estado: el reel principal es "AlcanzaNarrado" (~97 s, promo narrada de la app Al
 - Voz: `npx tsx herramientas/borradores/voz-finanzas.ts --tts --guion src/borradores/alcanza/guion.json --salida proyectos/2026-11-15-alcanza/voz` (94.1 s). Música: `npx tsx herramientas/borradores/sonidos-finanzas.ts --musica-para proyectos/2026-11-15-alcanza/voz/narracion.json --secciones B=hormiga,C=alcanza --destino proyectos/2026-11-15-alcanza/sonidos` (copiar ahí también los efectos de `proyectos/2026-11-15-finanzas-3d/sonidos/`).
 - Render: `proyectos/2026-11-15-alcanza/salida/narrado-v1.mp4`; con audio normalizado (−14 LUFS / −1.5 dBTP): `final-v1.mp4`.
 - 2026-11-16: correcciones del creador: español neutro (sin "caserito" ni regionalismos), billetera rehecha (bifold de cuero), sin bufanda. Render: `proyectos/2026-11-15-alcanza/salida/final-v2.mp4` (95 s).
+- 2026-11-16: voz del creador (de su propio generador) en `proyectos/2026-11-15-alcanza/voz-origen/voz_alcanza.mp3`, alineada con `voz-finanzas.ts --audio` (81.6 s, 250/250 palabras); la voz sintética quedó en `voz-tts/`. Render: `final-v3.mp4` (84 s).
 
 ## Qué sigue
 
-- Que el creador revise el reel de Alcanza. Pendientes que decide él: logo oficial (se armó uno con elementos de la app) y, si quiere otra voz, grabarla él (`--audio`); la sintética es es_MX-ald, la única latina con licencia libre.
+- Que el creador revise el reel de Alcanza. Pendientes que decide él: logo oficial (se armó uno con elementos de la app) (la voz ya es la del creador).
 - Fuentes Baloo 2 y Nunito: los .ttf no se versionan y no hay script que los baje; en otra máquina hay que regenerarlos (fuente y método en `biblioteca/LICENCIAS.md`).
 - Que el creador revise el borrador y diga qué cambiar (personajes, escena, textos, duración, ritmo).
 - Que el creador revise `FinanzasNarrado` (y si quiere grabar su voz con el guion).
