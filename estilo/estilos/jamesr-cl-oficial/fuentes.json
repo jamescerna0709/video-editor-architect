@@ -1,0 +1,15 @@
+{
+	"estilo": "jamesr-cl-oficial",
+	"fecha": "2026-11-12",
+	"origen": "propios",
+	"perfiles": ["jamesr_cl"],
+	"reels": [
+		{"shortCode": "Db_pDpPtJ6v", "url": "https://www.instagram.com/reel/Db_pDpPtJ6v/", "mp4": "referencias/propios/data/videos/Db_pDpPtJ6v.mp4", "publicado": "2026-08-13", "duracion_s": 31.765, "likes": 61, "plays": "N/A (yt-dlp no los trae)", "medido": ["ritmo", "subtitulos"]},
+		{"shortCode": "De-NzVpMcf7", "url": "https://www.instagram.com/reel/De-NzVpMcf7/", "mp4": "referencias/propios/data/videos/De-NzVpMcf7.mp4", "publicado": "2026-10-26", "duracion_s": 17.856, "likes": 6, "plays": "N/A (yt-dlp no los trae)", "medido": ["ritmo", "subtitulos"]},
+		{"shortCode": "De5CCmGOaPy", "url": "https://www.instagram.com/reel/De5CCmGOaPy/", "mp4": "referencias/propios/data/videos/De5CCmGOaPy.mp4", "publicado": "2026-10-24", "duracion_s": 17.113, "likes": 6, "plays": "N/A (yt-dlp no los trae)", "medido": ["ritmo"]},
+		{"shortCode": "De2XGAORTJb", "url": "https://www.instagram.com/reel/De2XGAORTJb/", "mp4": "referencias/propios/data/videos/De2XGAORTJb.mp4", "publicado": "2026-10-23", "duracion_s": 17.81, "likes": 4, "plays": "N/A (yt-dlp no los trae)", "medido": ["ritmo"]}
+	],
+	"lo_que_le_gusta": "mejor aprende de mis reels y si hay algo que podamos mejorar me lo dices",
+	"lo_que_no": "",
+	"base": "ninguna"
+}

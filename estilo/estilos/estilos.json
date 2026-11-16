@@ -11,6 +11,16 @@
 			"referencia": null,
 			"resumen": "Arranque genérico / generic starter: subtítulos blancos con borde negro de 2–3 palabras abajo, tarjetas de palabra clave, sin stickers ni memes, velocidad 1.0, corta silencios.",
 			"version": 1
+		},
+		{
+			"id": "jamesr-cl-oficial",
+			"nombre": "James oficial",
+			"carpeta": "estilo/estilos/jamesr-cl-oficial",
+			"estado": "en-prueba",
+			"desde": "2026-11-12",
+			"referencia": null,
+			"resumen": "Sus reels de @jamesr_cl (mezcla): subtítulos en MAYÚSCULAS de 1–3 palabras a la altura del pecho con una palabra resaltada (color por reel), gancho escrito en los primeros 3 s, tarjetas de palabra clave ~12/min, íconos simples con licencia, acercamientos entre frases, nada tapa la cara.",
+			"version": 1
 		}
 	]
 }

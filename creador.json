@@ -1,0 +1,21 @@
+{
+	"version": 1,
+	"nombre": "James",
+	"handle": "jamesr_cl",
+	"plataforma": "instagram",
+	"idioma": "es",
+	"estilo_activo": "jamesr-cl-oficial",
+	"corpus": {
+		"instagram_id": "60422148914",
+		"carpetas_apify": [],
+		"carpetas_ytdlp": ["referencias/propios"],
+		"carpetas_extra": [],
+		"crudos": []
+	},
+	"sfx": {
+		"solo_fuentes": [],
+		"pixabay": null
+	},
+	"voz": null,
+	"whisper_modelo": null
+}

@@ -1,0 +1,129 @@
+{
+	"id": "jamesr-cl-oficial",
+	"version": 1,
+	"estado": "en-prueba",
+	"cuenta": "jamesr_cl",
+	"fecha": "2026-11-12",
+	"documento": "estilo/estilos/jamesr-cl-oficial/perfil.md",
+	"base": "ninguna",
+	"referencia": {
+		"proyecto": null,
+		"edicion": null,
+		"final": null,
+		"veredicto": null
+	},
+	"velocidad": {
+		"factor": 1
+	},
+	"cortes": {
+		"solo_silencios": true,
+		"sin_aires": false,
+		"quitar_repeticiones_y_autocorrecciones": true
+	},
+	"titular": {
+		"por_defecto": "gancho de 1–3 palabras en los primeros 3 s, arriba (como 'Precio invisible' en Db_pDpPtJ6v)",
+		"referencia": "Db_pDpPtJ6v"
+	},
+	"subtitulos": {
+		"min_palabras": 1,
+		"max_palabras": 3,
+		"y": 1280,
+		"color": "#FFFFFF",
+		"borde": "#141612",
+		"fuente": "tiktok-sans",
+		"peso": 800,
+		"mayusculas": true,
+		"resaltado": {
+			"activo": true,
+			"color": "por reel",
+			"opciones_vistas": ["#B6FF3B (verde lima, De2XGAORTJb)", "#8C8CFF (azul violeta, De5CCmGOaPy)", "#2FEFEF (cian, De-NzVpMcf7)"],
+			"nota": "una palabra clave resaltada por subtítulo; el color se elige en cada reel (decisión de James 2026-11-12). Los hex de verde y violeta son aproximados a ojo de la hoja; el cian salió medido (n=4)."
+		}
+	},
+	"tarjetas": {
+		"palabras_min": 1,
+		"palabras_max": 5,
+		"por_minuto": {
+			"valor": 12,
+			"n": 4,
+			"fuente": "decisión de mezcla 2026-11-12: agosto ~21/min (11 títulos en 31.8 s, conteo en la hoja de Db_pDpPtJ6v, n=1); octubre 0/min (n=3). Se toma una cantidad menor para que el subtítulo siga mandando."
+		},
+		"con_emoji": 0,
+		"prompt_tecleado": true,
+		"literales": true
+	},
+	"stickers": {
+		"por_minuto": {
+			"valor": 2,
+			"n": 1,
+			"fuente": "Db_pDpPtJ6v: un ícono ⚠️ junto a 'Pierdes oportunidades' (~2/min, conteo en la hoja)"
+		},
+		"sin_repetir_assets": true,
+		"origen": "elementos de internet que Claude considere necesarios, SOLO con licencia clara (CC0 u OFL o propia), registrados en biblioteca/LICENCIAS.md y con el sí de James antes de bajar cada archivo"
+	},
+	"memes": {
+		"por_minuto": {
+			"valor": 0,
+			"n": 4,
+			"fuente": "no aparecen en ninguno de los 4 reels; se usan solo si hay uno con licencia clara y encaja"
+		}
+	},
+	"sfx": {
+		"solo_fuentes": [],
+		"archivo": "biblioteca/sfx/preferencias.json"
+	},
+	"zona_segura": {
+		"x": [135, 945],
+		"y": [220, 1600],
+		"puede_tapar_cara": false
+	},
+	"demos": {
+		"tema": "oscuro"
+	},
+	"no_va": ["capas encima de boca, nariz u ojos", "assets sin licencia clara", "varios colores de resaltado en el mismo reel"],
+	"referencias": ["Db_pDpPtJ6v", "De-NzVpMcf7", "De5CCmGOaPy", "De2XGAORTJb"],
+	"exportar_4k": {
+		"si_crudo_4k": true
+	},
+	"direccion": {
+		"sin_borrador_automatico": false,
+		"nota": "mezcla: subtítulos de octubre (MAYÚSCULAS, 1–3 palabras, una resaltada) + gancho escrito al inicio y tarjetas de palabra clave como en agosto; acercamientos de cámara (punch-in) entre frases como en octubre"
+	},
+	"motor": {
+		"version": 1,
+		"velocidad": {
+			"factor": 1,
+			"decision": "no medida (falta transcribir los reels publicados); arranque sin acelerar"
+		},
+		"aires": {
+			"hueco_minimo_s": 0.3,
+			"umbral_sobre_piso_db": 12,
+			"quitar_sueltos_s": 0,
+			"decision": "no medidos en tus reels; valores por defecto (corta pausas de más de 0.3 s) hasta la primera prueba"
+		},
+		"zona": {
+			"subtitulos_y": 1280,
+			"bajada_capas_px": 0,
+			"tarjeta_letra": 1,
+			"tarjeta_relleno": 1,
+			"prompt_letra": 1,
+			"ancho_max": 810,
+			"nota": "subtítulos a la altura del pecho: y p50 1264 (Db_pDpPtJ6v, n=4 eventos) y 1295 (De-NzVpMcf7, n=4), medir.ts; se toma 1280",
+			"puede_tapar_cara": false,
+			"margen_boca_px": null,
+			"nota_cara": "decisión de James 2026-11-12: nada tapa boca, nariz ni ojos"
+		},
+		"ritmo": {
+			"tarjetas_por_min": 12,
+			"stickers_por_min": 2,
+			"tarjetas_con_emoji": 0,
+			"fuente": "mezcla elegida 2026-11-12: tarjetas agosto ~21/min (n=1) y octubre 0/min (n=3) → 12; stickers ~2/min (Db_pDpPtJ6v, n=1)"
+		},
+		"decisiones": [
+			{"fecha": "2026-11-12", "tema": "base del estilo", "cita": "Mezcla (Recomendado)", "nota": "subtítulos de octubre + gancho y tarjetas de agosto"},
+			{"fecha": "2026-11-12", "tema": "color de resaltado", "cita": "Cambiar por reel"},
+			{"fecha": "2026-11-12", "tema": "tapar la cara", "cita": "No, nunca"},
+			{"fecha": "2026-11-12", "tema": "stickers y memes", "cita": "utiliza elementos que consideres necesarios de internet, navegador u otras fuentes", "nota": "siempre con licencia clara (CC0, OFL o propia) y registrados en biblioteca/LICENCIAS.md"}
+		]
+	}
+}
