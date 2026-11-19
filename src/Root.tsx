@@ -8,6 +8,7 @@ import {Personajes3D} from './borradores/Personajes3D';
 import {FinanzasTresD, DURACION_FINANZAS} from './borradores/FinanzasTresD';
 import {FinanzasNarrado, FPS_NARRADO, RUTA_NARRACION, type Narracion, type PropsNarrado} from './borradores/FinanzasNarrado';
 import {staticFile} from 'remotion';
+import {DetectiveNarrado, FPS_DETECTIVE, RUTA_NARRACION_DETECTIVE, type PropsDetective} from './borradores/DetectiveNarrado';
 import {AlcanzaNarrado, FPS_ALCANZA, RUTA_NARRACION_ALCANZA, type PropsAlcanza} from './borradores/AlcanzaNarrado';
 
 /**
@@ -73,6 +74,27 @@ export const RemotionRoot: React.FC = () => (
 			return {
 				props: {narracion},
 				durationInFrames: narracion ? Math.ceil((narracion.duracion_s + 2.5) * FPS_ALCANZA) : FPS_ALCANZA * 10,
+			};
+		}}
+	/>
+	{/* Reel "El caso del yapeo fantasma" (Alcanza), con la voz del creador. */}
+	<Composition
+		id="DetectiveNarrado"
+		component={DetectiveNarrado}
+		fps={FPS_DETECTIVE}
+		width={1080}
+		height={1920}
+		durationInFrames={FPS_DETECTIVE * 10}
+		defaultProps={{narracion: null} as PropsDetective}
+		calculateMetadata={async ({props}) => {
+			let narracion = props.narracion;
+			if (!narracion) {
+				const r = await fetch(staticFile(RUTA_NARRACION_DETECTIVE));
+				narracion = r.ok ? ((await r.json()) as Narracion) : null;
+			}
+			return {
+				props: {narracion},
+				durationInFrames: narracion ? Math.ceil((narracion.duracion_s + 2.5) * FPS_DETECTIVE) : FPS_DETECTIVE * 10,
 			};
 		}}
 	/>
