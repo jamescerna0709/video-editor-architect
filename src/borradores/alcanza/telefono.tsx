@@ -1116,3 +1116,291 @@ export const TarjetaCierre: React.FC<{desde: number; hasta: number}> = ({desde, 
 		</AbsoluteFill>
 	);
 };
+
+// ======================================================================================
+// Historial de pagos GENÉRICO (reel "detective"). Ninguna marca de terceros: gris/blanco/azul neutro, título
+// "Mis pagos", tipografía de sistema. No usa la piel cómic de Alcanza a propósito: es "otra app".
+// ======================================================================================
+const PG = {
+	fondo: '#F2F4F7',
+	tarjeta: '#FFFFFF',
+	texto: '#111827',
+	suave: '#6B7280',
+	linea: '#E5E7EB',
+	azul: '#2F6FDB',
+	azulOscuro: '#1E4FA8',
+	rojo: '#D92D20',
+	verde: '#12B76A',
+} as const;
+const FSIS = "Inter, -apple-system, 'Segoe UI', Roboto, 'Liberation Sans', sans-serif";
+
+export type MovimientoPago = {hora: string; texto: string; monto: string; tipo?: 'sale' | 'entra'};
+
+export const PantallaPagos: React.FC<{
+	desde: number;
+	saldo: string;
+	movimientos: MovimientoPago[];
+	/** Cuántos movimientos se ven (fraccionario anima la entrada del siguiente). Por defecto, todos. */
+	visibles?: number;
+	/** Índice del movimiento resaltado con un contorno miel que late. */
+	resaltar?: number;
+}> = ({desde, saldo, movimientos, visibles, resaltar}) => {
+	const {t, fps} = useT();
+	const vis = visibles ?? movimientos.length;
+	const cab = resorte(t, desde, fps, 16);
+	const saldoIn = resorte(t, desde + 0.12, fps, 11);
+	const tacha = interpolate(t, [desde + 0.45, desde + 0.75], [0, 1], fijo);
+	const latido = 0.5 + 0.5 * Math.sin((t - desde) * Math.PI * 2 * 1.6);
+	const ALTO = 70;
+	const flecha = (sale: boolean) => (sale ? 'M12 18V6M7 11l5-5 5 5' : 'M12 6v12M7 13l5 5 5-5');
+	return (
+		<AbsoluteFill style={{background: PG.fondo, color: PG.texto, fontFamily: FSIS, fontVariantNumeric: 'tabular-nums'}}>
+			<BarraEstado />
+			{/* cabecera */}
+			<div style={{position: 'absolute', top: 58, left: 20, right: 20, display: 'flex', alignItems: 'center', justifyContent: 'space-between', opacity: cab}}>
+				<div style={{fontWeight: 800, fontSize: 30, letterSpacing: '-0.02em'}}>Mis pagos</div>
+				<div style={{width: 42, height: 42, borderRadius: '50%', background: '#DDE3EC', display: 'grid', placeItems: 'center'}}>
+					<svg width={24} height={24} viewBox="0 0 24 24">
+						<circle cx={12} cy={9} r={4} fill="#8A94A6" />
+						<path d="M4.5 20c1.2-4 4-5.5 7.5-5.5s6.3 1.5 7.5 5.5" fill="#8A94A6" />
+					</svg>
+				</div>
+			</div>
+			{/* saldo */}
+			<div
+				style={{
+					position: 'absolute',
+					top: 112,
+					left: 16,
+					right: 16,
+					background: PG.tarjeta,
+					borderRadius: 24,
+					padding: '18px 20px 16px',
+					boxShadow: '0 10px 28px -14px rgba(17,24,39,.35)',
+					transform: `translateY(${(1 - cab) * 30}px)`,
+					opacity: cab,
+				}}
+			>
+				<div style={{fontWeight: 700, fontSize: 17, color: PG.suave}}>Saldo disponible</div>
+				<div style={{fontWeight: 800, fontSize: 64, lineHeight: 1.05, letterSpacing: '-0.03em', color: PG.rojo, transform: `scale(${0.7 + 0.3 * saldoIn})`, transformOrigin: '0% 60%'}}>
+					{saldo}
+				</div>
+				<div style={{display: 'inline-block', position: 'relative', fontWeight: 700, fontSize: 19, color: PG.suave, marginTop: 2}}>
+					ayer: S/ 180.00
+					<span style={{position: 'absolute', left: -3, top: '52%', height: 3, borderRadius: 2, background: PG.rojo, width: `calc(${tacha * 100}% + 6px)`}} />
+				</div>
+			</div>
+			{/* lista */}
+			<div style={{position: 'absolute', top: 284, left: 16, right: 16, display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', opacity: cab}}>
+				<span style={{fontWeight: 800, fontSize: 22}}>Movimientos</span>
+				<span style={{fontWeight: 700, fontSize: 16, color: PG.azul}}>Ayer</span>
+			</div>
+			<div style={{position: 'absolute', top: 320, left: 16, right: 16, background: PG.tarjeta, borderRadius: 22, padding: '4px 0', boxShadow: '0 10px 28px -16px rgba(17,24,39,.3)', minHeight: ALTO, opacity: cab}}>
+				{movimientos.map((m, i) => {
+					const p = Math.max(0, Math.min(1, vis - i));
+					if (p <= 0) return null;
+					const e = Easing.out(Easing.back(1.5))(p);
+					const sale = (m.tipo ?? 'sale') === 'sale';
+					const on = resaltar === i;
+					return (
+						<div
+							key={i}
+							style={{
+								position: 'relative',
+								height: ALTO * Math.min(1, p * 1.6),
+								display: 'flex',
+								alignItems: 'center',
+								gap: 12,
+								padding: '0 14px',
+								opacity: Math.min(1, p * 2),
+								transform: `translateX(${(1 - e) * 40}px)`,
+								borderTop: i > 0 ? `1px solid ${PG.linea}` : 'none',
+								zIndex: on ? 2 : 1,
+							}}
+						>
+							{on ? (
+								<div
+									style={{
+										position: 'absolute',
+										inset: '-3px 4px',
+										borderRadius: 16,
+										border: `4px solid ${C.honey}`,
+										background: `rgba(233,196,106,${0.16 + 0.12 * latido})`,
+										boxShadow: `0 0 ${10 + 12 * latido}px rgba(233,196,106,.9)`,
+										transform: `scale(${1 + 0.015 * latido})`,
+									}}
+								/>
+							) : null}
+							<div style={{position: 'relative', width: 44, height: 44, borderRadius: '50%', flex: 'none', display: 'grid', placeItems: 'center', background: sale ? '#FDECEA' : '#E3F8EE'}}>
+								<Icono d={flecha(sale)} size={24} color={sale ? PG.rojo : PG.verde} grosor={2.6} />
+							</div>
+							<div style={{position: 'relative', flex: 1, minWidth: 0, lineHeight: 1.15}}>
+								<div style={{fontWeight: 700, fontSize: 19, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}}>{m.texto}</div>
+								<div style={{fontWeight: 600, fontSize: 15, color: PG.suave}}>{m.hora}</div>
+							</div>
+							<div style={{position: 'relative', fontWeight: 800, fontSize: 20, whiteSpace: 'nowrap', color: sale ? PG.rojo : PG.verde}}>
+								{sale ? '−' : '+'} {m.monto.replace(/^[-+−]\s*/, '')}
+							</div>
+						</div>
+					);
+				})}
+			</div>
+			{/* barra inferior genérica */}
+			<div style={{position: 'absolute', left: 0, right: 0, bottom: 0, height: 84, background: PG.tarjeta, borderTop: `1px solid ${PG.linea}`, display: 'flex', justifyContent: 'space-around', alignItems: 'flex-start', paddingTop: 12}}>
+				{[
+					{d: ICONOS.inicio, l: 'Inicio', on: false},
+					{d: ICONOS.historial, l: 'Pagos', on: true},
+					{d: ICONOS.campana, l: 'Avisos', on: false},
+				].map((b) => (
+					<div key={b.l} style={{display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, color: b.on ? PG.azul : '#9AA3B2'}}>
+						<Icono d={b.d} size={24} grosor={2.2} />
+						<span style={{fontSize: 13, fontWeight: 700}}>{b.l}</span>
+					</div>
+				))}
+			</div>
+		</AbsoluteFill>
+	);
+};
+
+// ======================================================================================
+// Alcanza: pasar los pagos del día a categorías (reel "detective")
+// ======================================================================================
+const GASTOS_HOY: {n: string; m: number; c: 'Comida' | 'Transporte' | 'Salidas'}[] = [
+	{n: 'Menú + chicha + postre', m: 22, c: 'Comida'},
+	{n: 'Taxi', m: 10, c: 'Transporte'},
+	{n: 'Gaseosa y galletas', m: 6, c: 'Comida'},
+	{n: 'Cena (mi parte)', m: 37.5, c: 'Salidas'},
+	{n: 'Salchipapa (delivery)', m: 90, c: 'Comida'},
+];
+const COLOR_CAT = {Comida: C.terra, Transporte: C.sage, Salidas: C.honey} as const;
+// Cuadra con el guion: 180 − 22 − 10 − 6 − 127.50 (cena) + 90 (3 amigos) − 90 (salchipapa) = 14.50
+const TOPE_DIA = {Comida: 125, Transporte: 25} as const;
+
+export const PantallaPasarGastos: React.FC<{desde: number; progreso: number}> = ({desde, progreso}) => {
+	const {t, fps} = useT();
+	const n = GASTOS_HOY.length;
+	// cada gasto se ordena en su tramo de `progreso` (0.05 → 0.85)
+	const k = GASTOS_HOY.map((_, i) => interpolate(progreso, [0.05 + i * 0.16, 0.05 + i * 0.16 + 0.11], [0, 1], fijo));
+	const activo = k.findIndex((v) => v < 1);
+	const suma = (c: string) => GASTOS_HOY.reduce((s, g, i) => s + (g.c === c ? g.m * k[i] : 0), 0);
+	const comida = suma('Comida');
+	const transp = suma('Transporte');
+	const pctC = (comida / TOPE_DIA.Comida) * 100;
+	const pctT = (transp / TOPE_DIA.Transporte) * 100;
+	const frenar = interpolate(progreso, [0.86, 0.95], [0, 1], {...fijo, easing: Easing.out(Easing.back(2.2))});
+	const hechos = k.filter((v) => v >= 1).length;
+	return (
+		<Pantalla>
+			<BarraEstado />
+			<div style={{position: 'absolute', top: 58, left: 18, right: 18, display: 'flex', flexDirection: 'column', gap: 12}}>
+				<div style={{display: 'flex', alignItems: 'center', gap: 10, ...entra(t, desde, fps, 0)}}>
+					<div style={{flex: 1}}>
+						<div style={{fontFamily: FD, fontWeight: 800, fontSize: 31, lineHeight: 1.02}}>Anotar mis gastos de hoy</div>
+						<div style={{fontSize: 17, color: C.muted, fontWeight: 700, marginTop: 2}}>
+							{hechos} de {n} pagos ordenados
+						</div>
+					</div>
+					<div style={{background: C.sunk, border: BORDE, borderRadius: 18, padding: 2, flex: 'none'}}>
+						<Buddy animo={frenar > 0.5 ? 'nervioso' : 'buscando'} size={70} />
+					</div>
+				</div>
+				{/* presupuesto del día */}
+				<Tarjeta style={{marginTop: 8, padding: '16px 16px 14px', display: 'flex', flexDirection: 'column', gap: 9, position: 'relative', ...entra(t, desde, fps, 1)}}>
+					{[
+						{nom: 'Comida', v: comida, pct: pctC, tope: TOPE_DIA.Comida},
+						{nom: 'Transporte', v: transp, pct: pctT, tope: TOPE_DIA.Transporte},
+					].map((b) => {
+						const alto = b.pct >= 85;
+						return (
+							<div key={b.nom} style={{display: 'flex', flexDirection: 'column', gap: 5}}>
+								<div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'baseline'}}>
+									<span style={{fontWeight: 800, fontSize: 19}}>
+										<i style={{display: 'inline-block', width: 12, height: 12, borderRadius: 4, border: `2px solid ${C.ink}`, background: COLOR_CAT[b.nom as 'Comida'], marginRight: 7, verticalAlign: 0}} />
+										{b.nom}
+									</span>
+									<span style={{fontSize: 16, fontWeight: 700, color: C.muted}}>
+										<b style={{fontFamily: FD, fontSize: 19, color: alto ? C.crit : C.ink}}>{soles(b.v)}</b> de {soles(b.tope)}
+									</span>
+								</div>
+								<Barra pct={b.pct} color={alto ? C.terra : C.sage} alto={18} />
+							</div>
+						);
+					})}
+					<div
+						style={{
+							position: 'absolute',
+							right: -4,
+							top: -30,
+							zIndex: 5,
+							transform: `scale(${frenar}) rotate(3deg)`,
+							background: C.terra,
+							color: C.surface,
+							border: `3px solid ${C.ink}`,
+							boxShadow: SOMBRA,
+							borderRadius: 99,
+							padding: '4px 14px',
+							fontFamily: FD,
+							fontWeight: 800,
+							fontSize: 22,
+							whiteSpace: 'nowrap',
+						}}
+					>
+						¡Toca frenar!
+					</div>
+				</Tarjeta>
+				{/* pagos del día */}
+				<div style={{display: 'flex', flexDirection: 'column', gap: 8, ...entra(t, desde, fps, 2)}}>
+					{GASTOS_HOY.map((g, i) => {
+						const p = k[i];
+						const on = i === activo && progreso > 0.02;
+						const chip = Easing.out(Easing.back(2))(interpolate(p, [0.15, 0.7], [0, 1], fijo));
+						const chk = interpolate(p, [0.55, 1], [0, 1], fijo);
+						return (
+							<div
+								key={g.n}
+								style={{
+									display: 'flex',
+									alignItems: 'center',
+									gap: 10,
+									padding: '8px 10px 8px 12px',
+									borderRadius: 16,
+									border: BORDE,
+									background: on ? C.warnSoft : p >= 1 ? C.surface : C.sunk,
+									boxShadow: on ? SOMBRA : SOMBRA_S,
+									transform: `scale(${on ? 1.03 : 1})`,
+								}}
+							>
+								<div style={{flex: 1, minWidth: 0, lineHeight: 1.12}}>
+									<div style={{fontWeight: 800, fontSize: 18, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}}>{g.n}</div>
+									<div style={{fontFamily: FD, fontWeight: 800, fontSize: 19, color: C.crit}}>-{soles(g.m)}</div>
+								</div>
+								<span
+									style={{
+										fontWeight: 800,
+										fontSize: 15,
+										padding: '4px 10px',
+										borderRadius: 99,
+										border: `2px solid ${C.ink}`,
+										background: COLOR_CAT[g.c],
+										color: g.c === 'Salidas' ? C.ink : C.surface,
+										transform: `scale(${chip})`,
+										opacity: chip > 0 ? 1 : 0,
+										whiteSpace: 'nowrap',
+									}}
+								>
+									{g.c}
+								</span>
+								<div style={{width: 34, height: 34, borderRadius: '50%', flex: 'none', border: BORDE, background: chk > 0 ? C.sage : C.surface, display: 'grid', placeItems: 'center'}}>
+									<svg viewBox="0 0 24 24" width={22} height={22}>
+										<path d={ICONOS.check} fill="none" stroke={C.surface} strokeWidth={3.4} strokeLinecap="round" strokeLinejoin="round" pathLength={1} strokeDasharray={1} strokeDashoffset={1 - chk} />
+									</svg>
+								</div>
+							</div>
+						);
+					})}
+				</div>
+			</div>
+			<Pestanas activa="historial" />
+		</Pantalla>
+	);
+};
