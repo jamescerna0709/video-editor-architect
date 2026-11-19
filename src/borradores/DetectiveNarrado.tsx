@@ -12,12 +12,12 @@ import {AbsoluteFill, Easing, interpolate, Sequence, staticFile, useCurrentFrame
 import * as THREE from 'three';
 import {tiempos, type Narracion, type Tiempos} from './FinanzasNarrado';
 import {Etiqueta, Subtitulos} from './finanzas/capas';
-import {Luces} from './finanzas/escenarios';
+import {Barrio, Luces} from './finanzas/escenarios';
 import {Protagonista} from './alcanza/props3d';
 import {PantallaPagos, PantallaPasarGastos, Telefono, type MovimientoPago} from './alcanza/telefono';
 import {CierreDetective, Expediente, FiltroPorTiempos, PistaTitulo, Sello} from './detective/capas-detective';
 import {CAMA_SENTADO, ChorroAgua, Cocina, Cuarto, GRIFO, LAVADERO_FONDO, LucesCuarto, VasoAgua} from './detective/sets-cuarto';
-import {CalleTarde, MesaNoche, PARADA, Restaurante, SILLA, SILLA_PROTA, Salchipapa} from './detective/sets-flashback';
+import {CalleTarde, MesaNoche, PARADA, ROT_PROTA, Restaurante, SILLA, SILLA_PROTA, Salchipapa} from './detective/sets-flashback';
 
 export const FPS_DETECTIVE = 30;
 const SONIDOS = 'p/2026-11-19-alcanza-detective/sonidos';
@@ -53,24 +53,24 @@ const tomas = (T: Tiempos): Toma[] => {
 	const cara = suma(CAMA_SENTADO, [0, 1.25, 0]); // cara del protagonista sentado
 	const lista: Omit<Toma, 'hasta'>[] = [
 		// gancho: primer plano dramático en la cama, luego más abierto
-		{desde: 0, set: 'cuarto', de: suma(cara, [0.15, 0.05, 1.0]), a: suma(cara, [0.1, 0.02, 0.8]), mira: suma(cara, [0, -0.08, 0]), dura: 3},
+		{desde: 0, set: 'cuarto', de: suma(cara, [0.25, 0.08, 1.7]), a: suma(cara, [0.2, 0.05, 1.35]), mira: suma(cara, [0, -0.15, 0]), dura: 3},
 		{desde: en('gancho', 'así'), set: 'cuarto', de: suma(cara, [1.0, 0.4, 3.2]), a: suma(cara, [0.8, 0.3, 2.6]), mira: suma(cara, [0, -0.3, 0])},
 		// pista 1: título en el cuarto, flashback en el restaurante
 		{desde: esc('pista1').inicio, set: 'cuarto', de: suma(cara, [-0.6, 0.2, 2.2]), a: suma(cara, [-0.5, 0.15, 1.8]), mira: suma(cara, [0, -0.2, 0])},
-		{desde: en('pista1', 'el'), set: 'restaurante', de: suma(SILLA, [1.6, 1.8, 3.6]), a: suma(SILLA, [1.3, 1.6, 3.0]), mira: suma(SILLA, [0.5, 0.8, 0])},
-		{desde: en('pista1', 'pide', 2), set: 'restaurante', de: suma(SILLA, [0.9, 1.4, 1.8]), a: suma(SILLA, [0.8, 1.3, 1.5]), mira: suma(SILLA, [0.6, 0.85, -0.3])},
+		{desde: en('pista1', 'el'), set: 'restaurante', de: [0.95, 2.2, 4.6], a: [0.75, 2.05, 3.9], mira: [0.12, 1.3, -0.8]},
+		{desde: en('pista1', 'pide', 2), set: 'restaurante', de: [0.95, 1.95, 3.1], a: [0.85, 1.85, 2.7], mira: [0.05, 1.05, -0.35]},
 		// pista 2: título en el cuarto, flashback en la calle (taxi, luego bodega)
 		{desde: esc('pista2').inicio, set: 'cuarto', de: suma(cara, [0.7, 0.25, 2.2]), a: suma(cara, [0.6, 0.2, 1.8]), mira: suma(cara, [0, -0.25, 0])},
-		{desde: en('pista2', 'el'), set: 'calle', de: suma(PARADA, [1.5, 2.2, 6.5]), a: suma(PARADA, [1.2, 2.0, 5.6]), mira: suma(PARADA, [0.8, 1.0, -1.0])},
-		{desde: en('pista2', 'de', 2), set: 'calle', de: suma(PARADA, [2.6, 1.8, 4.2]), a: suma(PARADA, [2.4, 1.6, 3.6]), mira: suma(PARADA, [2.8, 0.9, -0.8])},
+		{desde: en('pista2', 'el'), set: 'calle', de: [1.2, 3.4, 17], a: [1.4, 3.0, 14.5], mira: [1.6, 2.0, 3.5]},
+		{desde: en('pista2', 'de', 2), set: 'calle', de: [1.6, 2.1, 6.3], a: [1.4, 1.9, 5.5], mira: [1.1, 1.2, 2.1]},
 		// pista 3: título en el cuarto (manos en la cabeza), flashback de noche y salchipapa
 		{desde: esc('pista3').inicio, set: 'cuarto', de: suma(cara, [0, 0.3, 2.6]), a: suma(cara, [0, 0.25, 2.1]), mira: suma(cara, [0, -0.15, 0])},
-		{desde: en('pista3', 'el'), set: 'noche', de: suma(SILLA_PROTA, [0.4, 2.2, 4.8]), a: suma(SILLA_PROTA, [0.3, 1.9, 4.0]), mira: suma(SILLA_PROTA, [0.6, 0.8, -0.8])},
-		{desde: en('pista3', 'y', 2), set: 'salchipapa', de: [0.5, 0.9, 1.6], a: [0.4, 0.75, 1.25], mira: [0, 0.15, 0]},
+		{desde: en('pista3', 'el'), set: 'noche', de: [0.7, 2.8, 6.3], a: [0.6, 2.5, 5.4], mira: [0.3, 1.25, -0.1]},
+		{desde: en('pista3', 'y', 2), set: 'salchipapa', de: [0.24, 0.75, 1.3], a: [0.18, 0.62, 1.0], mira: [0.1, 0.1, -0.1]},
 		// cierre: noche en la cama, tranquilo
 		{desde: esc('cierre').inicio, set: 'cuarto', de: suma(cara, [0.9, 0.3, 2.8]), a: suma(cara, [0.7, 0.2, 2.2]), mira: suma(cara, [0, -0.25, 0])},
 		// remate: cocina, mirando a cámara
-		{desde: esc('remate').inicio, set: 'cocina', de: suma(GRIFO, [0.2, -0.3, 2.6]), a: suma(GRIFO, [0.15, -0.35, 2.1]), mira: suma(GRIFO, [0.6, -0.55, 0.4])},
+		{desde: esc('remate').inicio, set: 'cocina', de: [1.05, 1.6, 2.9], a: [1.0, 1.55, 2.4], mira: [0.75, 1.25, -0.4]},
 	];
 	return lista.map((t, i) => ({...t, hasta: i + 1 < lista.length ? lista[i + 1].desde : Infinity}));
 };
@@ -117,7 +117,7 @@ const SetCuarto: React.FC<PropsSet> = ({T, t}) => {
 
 const SetRestaurante: React.FC<PropsSet> = ({T, t}) => (
 	<>
-		<Luces />
+		<Luces tarde={0.1} cielo={false} />
 		<Restaurante chicha={tramo(t, T.en('pista1', 'chicha') - 0.1, T.en('pista1', 'chicha') + 0.3, 0, 1)} postre={tramo(t, T.en('pista1', 'postre') - 0.1, T.en('pista1', 'postre') + 0.3, 0, 1)} />
 		<Protagonista position={SILLA} sentado animo="feliz" />
 	</>
@@ -126,16 +126,16 @@ const SetRestaurante: React.FC<PropsSet> = ({T, t}) => (
 const SetCalle: React.FC<PropsSet> = ({T, t}) => (
 	<>
 		<Luces tarde={0.8} />
+		<Barrio tarde={0.8} />
 		<CalleTarde taxi={tramo(t, T.en('pista2', 'un'), T.en('pista2', 'S/ 10'), 0, 1)} bodega={tramo(t, T.en('pista2', 'gaseosa') - 0.2, T.en('pista2', 'galletas') + 0.2, 0, 1)} />
-		<Protagonista position={PARADA} rotationY={0.3} animo="normal" />
+		<Protagonista position={PARADA} rotationY={0.6} animo="normal" celebra={tramo(t, T.en('pista2', 'taxi') - 0.3, T.en('pista2', 'taxi'), 0, 0.6) * tramo(t, T.en('pista2', 'S/ 10'), T.en('pista2', 'S/ 10') + 0.4, 1, 0)} />
 	</>
 );
 
 const SetNoche: React.FC<PropsSet> = ({T, t}) => (
 	<>
-		<LucesCuarto noche={1} />
 		<MesaNoche cuenta={tramo(t, T.en('pista3', 'muchachos'), T.en('pista3', 'cuenta'), 0, 1)} amigos={tramo(t, T.en('pista3', 'ustedes'), T.en('pista3', 'yapean') + 0.3, 0, 1)} />
-		<Protagonista position={SILLA_PROTA} sentado animo="feliz" celebra={tramo(t, T.en('pista3', 'muchachos'), T.en('pista3', 'muchachos') + 0.4, 0, 1)} />
+		<Protagonista position={SILLA_PROTA} rotationY={ROT_PROTA} sentado animo="feliz" celebra={tramo(t, T.en('pista3', 'muchachos'), T.en('pista3', 'muchachos') + 0.4, 0, 1)} />
 	</>
 );
 
