@@ -1,0 +1,30 @@
+{
+	"_nota": "Guion del reel 'El caso del yapeo fantasma' (Alcanza, app del creador). Texto literal del creador, tal como lo dice su audio (proyectos/2026-11-19-alcanza-detective/voz-origen/alcanza_reel_2.mp3). Las llaves {mostrar|decir} juntan palabras habladas en un solo subtítulo. Yape es marca de terceros: no se muestra su logo ni su interfaz; las pantallas de pagos son genéricas.",
+	"idioma": "es-PE",
+	"escenas": [
+		{
+			"id": "gancho",
+			"texto": "Estoy {99%|noventa y nueve por ciento} seguro de que anoche me clonaron el yape. Ayer tenía {S/ 180|ciento ochenta soles} y hoy amanecí con {S/ 14.50|catorce cincuenta}. Así que me tocó ponerme en modo detective para atrapar al ladrón."
+		},
+		{
+			"id": "pista1",
+			"texto": "Primera pista: {1:30|una y treinta} de la tarde. El sospechoso, que curiosamente se parece bastante a mí, entra a comer menú. Pero no pide el de {S/ 12|doce soles}, no... pide chicha aparte y su postre, porque se lo merece. Primeros {S/ 22|veintidós soles} desaparecidos."
+		},
+		{
+			"id": "pista2",
+			"texto": "Segunda pista: {6:00|seis} de la tarde. El sujeto ve el micro lleno y dice: un taxi nomás, son {S/ 10|diez luquitas}. De paso baja en la esquina por una gaseosa helada y unas galletas para el camino. Otros {S/ 16|dieciséis soles} que se esfuman sin dejar huella."
+		},
+		{
+			"id": "pista3",
+			"texto": "Tercera pista: {9:00|nueve} de la noche. El culpable suelta la frase mortal: muchachos, yo pago toda la cuenta y ustedes me yapean. Spoiler: tres sí le yapearon... y esa misma plata se la gastó en un delivery de salchipapa a medianoche."
+		},
+		{
+			"id": "cierre",
+			"texto": "Caso cerrado: no hubo hackers, solo amnesia financiera. Como ya no confío en mi cerebro cuando tengo hambre o flojera, ahora antes de dormir paso mis yapeos a Alcanza. Ahí veo clarito en qué categoría se me fuga la plata y cuándo ya toca frenar."
+		},
+		{
+			"id": "remate",
+			"texto": "En conclusión: este fin de semana no se sale, se toma agüita y se reflexiona."
+		}
+	]
+}
