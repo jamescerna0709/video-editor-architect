@@ -1,6 +1,6 @@
 # ESTADO
 
-Estado: el reel principal es "AlcanzaNarrado" (~97 s, promo narrada de la app Alcanza del creador, estilo de sus referencias), renderizado en local y sin costo; también están "FinanzasNarrado" y dos borradores 3D anteriores.
+Estado: el último reel es "DetectiveNarrado" ("El caso del yapeo fantasma", ~80 s, Alcanza, con la voz del creador), renderizado en la nube y sin costo; antes: AlcanzaNarrado (v3 con su voz), FinanzasNarrado y dos borradores 3D.
 
 ## Qué se hizo
 
@@ -18,6 +18,7 @@ Estado: el reel principal es "AlcanzaNarrado" (~97 s, promo narrada de la app Al
 - Render: `proyectos/2026-11-15-alcanza/salida/narrado-v1.mp4`; con audio normalizado (−14 LUFS / −1.5 dBTP): `final-v1.mp4`.
 - 2026-11-16: correcciones del creador: español neutro (sin "caserito" ni regionalismos), billetera rehecha (bifold de cuero), sin bufanda. Render: `proyectos/2026-11-15-alcanza/salida/final-v2.mp4` (95 s).
 - 2026-11-16: voz del creador (de su propio generador) en `proyectos/2026-11-15-alcanza/voz-origen/voz_alcanza.mp3`, alineada con `voz-finanzas.ts --audio` (81.6 s, 250/250 palabras); la voz sintética quedó en `voz-tts/`. Render: `final-v3.mp4` (84 s).
+- 2026-11-19: reel "El caso del yapeo fantasma" (guion y voz del creador, `proyectos/2026-11-19-alcanza-detective/voz-origen/alcanza_reel_2.mp3`, 77.6 s, alineado 226/226 con `voz-finanzas.ts --audio --guion src/borradores/detective/guion.json`). Composición `DetectiveNarrado` (`src/borradores/DetectiveNarrado.tsx`): cuarto/cocina (`detective/sets-cuarto.tsx`), flashbacks en blanco y negro (`detective/sets-flashback.tsx`, `detective/capas-detective.tsx`), pantalla de pagos genérica y Alcanza (`alcanza/telefono.tsx`). Montos cuadrados: 180 − 22 − 10 − 6 − 127.50 + 90 − 90 = 14.50. Música y efectos: `npx tsx herramientas/borradores/sonidos-detective.ts`. Render: `salida/final-v1.mp4` (266 MB, maestro) y `salida/final-v1-ig.mp4` (19.7 MB, x264 crf 25, para subir).
 
 ## Qué sigue
 
