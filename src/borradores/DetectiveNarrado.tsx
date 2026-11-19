@@ -16,7 +16,7 @@ import {Luces} from './finanzas/escenarios';
 import {Protagonista} from './alcanza/props3d';
 import {PantallaPagos, PantallaPasarGastos, Telefono, type MovimientoPago} from './alcanza/telefono';
 import {CierreDetective, Expediente, FiltroPorTiempos, PistaTitulo, Sello} from './detective/capas-detective';
-import {CAMA_SENTADO, ChorroAgua, Cocina, Cuarto, GRIFO, LucesCuarto, Pan, VasoAgua} from './detective/sets-cuarto';
+import {CAMA_SENTADO, ChorroAgua, Cocina, Cuarto, GRIFO, LAVADERO_FONDO, LucesCuarto, VasoAgua} from './detective/sets-cuarto';
 import {CalleTarde, MesaNoche, PARADA, Restaurante, SILLA, SILLA_PROTA, Salchipapa} from './detective/sets-flashback';
 
 export const FPS_DETECTIVE = 30;
@@ -50,7 +50,7 @@ type Toma = {desde: number; hasta: number; set: SetId; de: V3; a: V3; mira: V3; 
 
 const tomas = (T: Tiempos): Toma[] => {
 	const {en, esc} = T;
-	const cara = suma(CAMA_SENTADO, [0, 1.05, 0]); // cara del protagonista sentado
+	const cara = suma(CAMA_SENTADO, [0, 1.25, 0]); // cara del protagonista sentado
 	const lista: Omit<Toma, 'hasta'>[] = [
 		// gancho: primer plano dramático en la cama, luego más abierto
 		{desde: 0, set: 'cuarto', de: suma(cara, [0.15, 0.05, 1.0]), a: suma(cara, [0.1, 0.02, 0.8]), mira: suma(cara, [0, -0.08, 0]), dura: 3},
@@ -150,12 +150,18 @@ const SetCocina: React.FC<PropsSet> = ({T, t}) => {
 	const agua = T.en('remate', 'toma');
 	return (
 		<>
-			<LucesCuarto noche={0} />
+			<LucesCuarto noche={0} lampara={null} />
 			<Cocina />
-			<ChorroAgua position={GRIFO} activo={tramo(t, agua - 0.6, agua - 0.3, 0, 1) * tramo(t, agua + 0.4, agua + 0.6, 1, 0)} />
-			<VasoAgua position={[GRIFO[0], GRIFO[1] - 0.45, GRIFO[2]]} nivel={tramo(t, agua - 0.5, agua + 0.4, 0, 1)} />
-			<Pan position={[GRIFO[0] + 0.5, GRIFO[1] - 0.45, GRIFO[2] + 0.1]} />
-			<Protagonista position={[GRIFO[0] + 0.6, 0, GRIFO[2] + 0.6]} rotationY={0} animo="serio" vaso={tramo(t, agua + 0.5, agua + 1.0, 0, 1)} pan />
+			<ChorroAgua position={GRIFO} activo={tramo(t, T.esc('remate').inicio, T.esc('remate').inicio + 0.3, 0, 1) * tramo(t, agua - 0.3, agua, 1, 0)} />
+			<VasoAgua position={LAVADERO_FONDO} nivel={tramo(t, T.esc('remate').inicio, agua, 0.2, 0.9)} />
+			{/* sostiene otro vaso a la altura del pecho y bebe en "agüita" (vaso=1 le tapa la boca, así que solo un momento) */}
+			<Protagonista
+				position={[GRIFO[0] + 0.6, 0, GRIFO[2] + 0.6]}
+				rotationY={0}
+				animo="serio"
+				vaso={0.5 + 0.5 * tramo(t, T.en('remate', 'agüita') - 0.1, T.en('remate', 'agüita') + 0.3, 0, 1) * tramo(t, T.en('remate', 'y', 1) + 0.2, T.en('remate', 'reflexiona'), 1, 0)}
+				pan
+			/>
 		</>
 	);
 };

@@ -294,7 +294,7 @@ export const Celular: React.FC<CelularProps> = ({position = [0, 0, 0], rotation 
 // ============================================================
 // Protagonista (mascota de Alcanza)
 // ============================================================
-export type AnimoProtagonista = 'normal' | 'confundido' | 'feliz';
+export type AnimoProtagonista = 'normal' | 'confundido' | 'feliz' | 'panico' | 'serio';
 
 export type ProtagonistaProps = {
 	position?: V3;
@@ -303,6 +303,7 @@ export type ProtagonistaProps = {
 	caminando?: boolean;
 	/** 0..1: brazos arriba y brinquitos. */
 	celebra?: number;
+	/** 'panico': ojos enormes con pupilas chicas, boca en "O", el gorro brinca y gotas de sudor. 'serio': ojos a media asta y boca plana. */
 	animo?: AnimoProtagonista;
 	/** 0..1: sube un celular en la mano derecha frente a la cara, con la pantalla encendida. */
 	conCelular?: number;
@@ -314,6 +315,16 @@ export type ProtagonistaProps = {
 	pantallaAlFrente?: boolean;
 	/** Desfase del ciclo de caminar/respirar (radianes). */
 	fase?: number;
+	/** 0..1: lentes oscuros de detective. Entre 0 y 1 la mano derecha los sube desde abajo hasta la cara (de 1 a 0 se los quita). */
+	lentes?: number;
+	/** 0..1: las dos manos a la cabeza (desesperación). */
+	manosCabeza?: number;
+	/** 0..1: libreta en la mano izquierda y lápiz escribiendo en la derecha (mira la libreta). */
+	anotando?: number;
+	/** 0..1: vaso de agua en la mano derecha; 0.5 = a la altura del pecho, 1 = tomando. 0 = sin vaso. */
+	vaso?: number;
+	/** Pan francés en la mano izquierda. */
+	pan?: boolean;
 };
 
 const texInterrogacion = () =>
@@ -331,11 +342,192 @@ const texInterrogacion = () =>
 		}),
 	);
 
+// ---------- props de mano (también los usa ../detective/sets-cuarto.tsx) ----------
+export type PropManoProps = {position?: V3; rotation?: V3; escala?: number};
+
+/**
+ * Lentes oscuros de detective (≈0.25 de ancho): micas negras brillantes, marco grueso arriba y patillas
+ * hacia -Z. El origen es el centro del puente; miran a +Z. Hechos a la medida de la cara de la mascota.
+ */
+export const LentesOscuros: React.FC<PropManoProps & {patillas?: boolean}> = ({position = [0, 0, 0], rotation = [0, 0, 0], escala = 1, patillas = true}) => {
+	const negro = mat('#0b0b0e', {r: 0.12, m: 0.35});
+	const marco = mat('#141416', {r: 0.3, m: 0.2});
+	const brillo = mat('#ffffff', {r: 0.2, o: 0.32});
+	return (
+		<group position={position} rotation={rotation} scale={escala}>
+			{[-1, 1].map((s) => (
+				<group key={s} position={[s * 0.058, 0, 0]} rotation={[0, s * 0.2, 0]}>
+					<mesh geometry={G.redonda(0.094, 0.064, 0.016, 0.022, 3)} material={negro} castShadow />
+					{/* barra gruesa de arriba */}
+					<mesh geometry={G.redonda(0.104, 0.024, 0.024, 0.01, 2)} material={marco} position={[0, 0.03, 0.002]} castShadow />
+					{/* reflejo diagonal */}
+					<mesh geometry={G.plano()} material={brillo} position={[-0.012, -0.002, 0.0085]} rotation={[0, 0, 0.75]} scale={[0.012, 0.07, 1]} />
+				</group>
+			))}
+			<B p={[0, 0.018, 0.004]} s={[0.034, 0.014, 0.014]} m={marco} sombra={false} />
+			{patillas
+				? [-1, 1].map((s) => <Palo key={s} a={[s * 0.106, 0.026, -0.006]} b={[s * 0.178, 0.022, -0.17]} r={0.008} m={marco} seg={6} />)
+				: null}
+		</group>
+	);
+};
+
+const VASO_H = 0.13;
+const VASO_R = 0.045;
+const VASO_RB = 0.037;
+
+/** Vaso de vidrio (≈0.09 de diámetro, 0.13 de alto, base en y = 0) con agua hasta `nivel` (0..1). */
+export const VasoConAgua: React.FC<PropManoProps & {nivel?: number}> = ({position = [0, 0, 0], rotation = [0, 0, 0], escala = 1, nivel = 0.7}) => {
+	const vidrio = useMemo(
+		() => new THREE.MeshStandardMaterial({color: '#e8f6ff', roughness: 0.05, metalness: 0.1, transparent: true, opacity: 0.3, side: THREE.DoubleSide, depthWrite: false}),
+		[],
+	);
+	const agua = useMemo(() => new THREE.MeshStandardMaterial({color: '#4fa9ea', roughness: 0.1, transparent: true, opacity: 0.62, depthWrite: false, emissive: new THREE.Color('#1d6fb8'), emissiveIntensity: 0.15}), []);
+	const superficie = useMemo(() => new THREE.MeshStandardMaterial({color: '#bfe6ff', roughness: 0.05, transparent: true, opacity: 0.75, depthWrite: false}), []);
+	useEffect(
+		() => () => {
+			vidrio.dispose();
+			agua.dispose();
+			superficie.dispose();
+		},
+		[vidrio, agua, superficie],
+	);
+	const n = clamp01(nivel);
+	const fondo = 0.012;
+	const hAgua = (VASO_H - fondo - 0.008) * n;
+	const rAgua = lerp(VASO_RB, VASO_R, n) - 0.004;
+	const pared = geo('vasoPared', () => new THREE.CylinderGeometry(VASO_R, VASO_RB, VASO_H, 24, 1, true));
+	return (
+		<group position={position} rotation={rotation} scale={escala}>
+			<mesh geometry={pared} material={vidrio} position={[0, VASO_H / 2, 0]} renderOrder={3} />
+			<mesh geometry={G.cil(24)} material={vidrio} position={[0, fondo / 2, 0]} scale={[VASO_RB * 2, fondo, VASO_RB * 2]} renderOrder={3} />
+			<mesh geometry={G.toro(VASO_R, 0.0025, Math.PI * 2, 4, 24)} material={vidrio} position={[0, VASO_H, 0]} rotation={[Math.PI / 2, 0, 0]} renderOrder={3} />
+			{n > 0.01 ? (
+				<>
+					<mesh geometry={geo('vasoAgua', () => new THREE.CylinderGeometry(1, VASO_RB / VASO_R, 1, 24))} material={agua} position={[0, fondo + hAgua / 2, 0]} scale={[rAgua, hAgua, rAgua]} renderOrder={2} />
+					<mesh geometry={G.disco(24)} material={superficie} position={[0, fondo + hAgua + 0.0005, 0]} rotation={[-Math.PI / 2, 0, 0]} scale={[rAgua * 2, rAgua * 2, 1]} renderOrder={2} />
+				</>
+			) : null}
+		</group>
+	);
+};
+
+/** Pan francés peruano (≈0.18 × 0.12, base en y = 0): bollo dorado con la cresta del corte a lo largo de X. */
+export const PanFrances: React.FC<PropManoProps> = ({position = [0, 0, 0], rotation = [0, 0, 0], escala = 1}) => {
+	const corteza = mat('#c47f3a', {r: 0.72});
+	const tostado = mat('#a8642a', {r: 0.75});
+	const cresta = mat('#e7bb73', {r: 0.85});
+	return (
+		<group position={position} rotation={rotation} scale={escala}>
+			<Esf p={[0, 0.042, 0]} r={[0.09, 0.046, 0.062]} m={corteza} seg={20} />
+			<Esf p={[0, 0.06, 0]} r={[0.075, 0.032, 0.05]} m={tostado} seg={16} sombra={false} />
+			{/* cresta del corte, más clarita */}
+			<Esf p={[0.004, 0.082, 0.004]} r={[0.07, 0.016, 0.02]} m={cresta} seg={14} sombra={false} />
+			<Esf p={[0.004, 0.079, -0.014]} r={[0.062, 0.01, 0.01]} m={tostado} seg={10} sombra={false} />
+			{/* puntas */}
+			{[-1, 1].map((s) => (
+				<Esf key={s} p={[s * 0.082, 0.036, 0]} r={[0.022, 0.026, 0.03]} m={tostado} seg={10} sombra={false} />
+			))}
+		</group>
+	);
+};
+
+const texLibreta = () =>
+	texFija('libretaMano', () =>
+		lienzo(128, 160, (ctx) => {
+			ctx.fillStyle = '#fbf6ea';
+			ctx.fillRect(0, 0, 128, 160);
+			ctx.strokeStyle = '#9cc0e0';
+			ctx.lineWidth = 2;
+			for (let y = 26; y < 160; y += 16) {
+				ctx.beginPath();
+				ctx.moveTo(6, y);
+				ctx.lineTo(122, y);
+				ctx.stroke();
+			}
+			ctx.strokeStyle = '#2b2b3a';
+			ctx.lineWidth = 2.5;
+			const r = rng(11);
+			for (let i = 0; i < 6; i++) {
+				const y = 22 + i * 16;
+				ctx.beginPath();
+				ctx.moveTo(12, y);
+				const fin = 40 + r() * 70;
+				for (let x = 12; x < fin; x += 5) ctx.lineTo(x, y - 3 + r() * 6);
+				ctx.stroke();
+			}
+		}),
+	);
+
+/** Libretita de bolsillo en la mano (0.13 × 0.17); origen en su centro, hoja hacia +Y. */
+const LibretaMano: React.FC<{p: V3; rot: V3}> = ({p, rot}) => (
+	<group position={p} rotation={rot}>
+		<mesh geometry={G.redonda(0.135, 0.01, 0.175, 0.004)} material={mat('#5b3a29', {r: 0.7})} castShadow />
+		<B p={[0, 0.009, 0]} s={[0.124, 0.008, 0.164]} c="#f3eee2" sombra={false} />
+		<mesh geometry={G.plano()} material={matMapa('libretaMano', texLibreta, {r: 0.9})} position={[0, 0.0135, 0]} rotation={[-Math.PI / 2, 0, 0]} scale={[0.124, 0.164, 1]} />
+		{/* espiral arriba */}
+		{[-0.045, -0.015, 0.015, 0.045].map((x) => (
+			<mesh key={x} geometry={G.toro(0.009, 0.002, Math.PI * 2, 4, 10)} material={mat('#9aa0a6', {r: 0.3, m: 0.7})} position={[x, 0.006, -0.087]} rotation={[0, Math.PI / 2, 0]} />
+		))}
+	</group>
+);
+
+/** Lápiz entre dos puntos (punta en `a`). */
+const LapizMano: React.FC<{a: THREE.Vector3; b: THREE.Vector3}> = ({a, b}) => {
+	const d = b.clone().sub(a);
+	const largo = d.length();
+	const q = new THREE.Quaternion().setFromUnitVectors(ARRIBA, d.clone().normalize());
+	return (
+		<group position={[a.x, a.y, a.z]} quaternion={[q.x, q.y, q.z, q.w]}>
+			<mesh geometry={G.cono(0, 8)} material={mat('#2b2b2b', {r: 0.5})} position={[0, 0.006, 0]} scale={[0.006, 0.012, 0.006]} />
+			<mesh geometry={G.cono(0.35, 8)} material={mat('#e8c9a0', {r: 0.8})} position={[0, 0.022, 0]} rotation={[Math.PI, 0, 0]} scale={[0.018, 0.024, 0.018]} />
+			<mesh geometry={G.cil(6)} material={mat(MARCA.miel, {r: 0.55})} position={[0, 0.034 + (largo - 0.05) / 2, 0]} scale={[0.018, largo - 0.05, 0.018]} castShadow />
+			<mesh geometry={G.cil(10)} material={mat('#b8bcc2', {r: 0.3, m: 0.7})} position={[0, largo - 0.01, 0]} scale={[0.019, 0.014, 0.019]} />
+			<mesh geometry={G.cil(10)} material={mat('#e58a9a', {r: 0.8})} position={[0, largo + 0.006, 0]} scale={[0.018, 0.018, 0.018]} />
+		</group>
+	);
+};
+
+// ---------- cinemática del brazo (dos segmentos) ----------
+const L_BRAZO = 0.27;
+const L_ANTEBRAZO = 0.28;
+type PoseBrazo = {q: THREE.Quaternion; codo: number};
+const ATRAS = new THREE.Vector3(0, 0, -1);
+
+/** Posición de la mano (marco del cuerpo) con el brazo en `q` y el codo doblado `codo`. */
+const fkMano = (hombro: THREE.Vector3, q: THREE.Quaternion, codo: number) =>
+	new THREE.Vector3(0, -L_BRAZO - L_ANTEBRAZO * Math.cos(codo), -L_ANTEBRAZO * Math.sin(codo)).applyQuaternion(q).add(hombro);
+
+/** IK analítica de dos segmentos: la mano llega a `objetivo` y el codo apunta hacia `polo`. */
+const ikBrazo = (hombro: THREE.Vector3, objetivo: THREE.Vector3, polo: THREE.Vector3): PoseBrazo => {
+	const t = objetivo.clone().sub(hombro);
+	const d = THREE.MathUtils.clamp(t.length(), 0.06, L_BRAZO + L_ANTEBRAZO - 0.002);
+	const tn = t.lengthSq() > 1e-10 ? t.normalize() : new THREE.Vector3(0, -1, 0);
+	const cosC = THREE.MathUtils.clamp((d * d - L_BRAZO * L_BRAZO - L_ANTEBRAZO * L_ANTEBRAZO) / (2 * L_BRAZO * L_ANTEBRAZO), -1, 1);
+	const codo = -Math.acos(cosC);
+	const local = new THREE.Vector3(0, -L_BRAZO - L_ANTEBRAZO * Math.cos(codo), -L_ANTEBRAZO * Math.sin(codo)).normalize();
+	const q = new THREE.Quaternion().setFromUnitVectors(local, tn);
+	const a = new THREE.Vector3(0, -1, 0).applyQuaternion(q);
+	a.addScaledVector(tn, -a.dot(tn));
+	const b = polo.clone().addScaledVector(tn, -polo.dot(tn));
+	if (a.lengthSq() > 1e-8 && b.lengthSq() > 1e-8) {
+		a.normalize();
+		b.normalize();
+		const ang = Math.atan2(tn.dot(a.clone().cross(b)), a.dot(b));
+		q.premultiply(new THREE.Quaternion().setFromAxisAngle(tn, ang));
+	}
+	return {q, codo};
+};
+
+/** Punto del cuerpo (marco de hombros) de algo pegado a la cabeza en `local` (relativo al centro de la cabeza). */
+const enCabeza = (local: V3, rot: THREE.Euler) => new THREE.Vector3(local[0], local[1] + 0.14, local[2]).applyEuler(rot).add(new THREE.Vector3(0, 1.42, 0));
+
 /**
  * Mascota de Alcanza en el estilo de bloques de `Persona` (≈1.85 de alto con el pompón, mira a +Z):
  * gorro rojo con pompón, camisa crema con cuello y jeans. Hombros a y ≈ 1.36, cara a y ≈ 1.56.
  * Sentado: la cadera queda a y ≈ 0.53 y las rodillas ~0.42 hacia +Z; coloca el origen sobre el
- * asiento (p. ej. en el centro del sillón) a la altura del piso.
+ * asiento (p. ej. en el centro del sillón) a la altura del piso. Sentado, la cara queda a y ≈ 1.25.
+ * Extras de detective: `lentes`, `manosCabeza`, `anotando`, `vaso`, `pan` y los ánimos 'panico' y 'serio'.
  */
 export const Protagonista: React.FC<ProtagonistaProps> = ({
 	position = [0, 0, 0],
@@ -349,6 +541,11 @@ export const Protagonista: React.FC<ProtagonistaProps> = ({
 	sentado = false,
 	pantallaAlFrente = false,
 	fase = 0,
+	lentes = 0,
+	manosCabeza = 0,
+	anotando = 0,
+	vaso = 0,
+	pan = false,
 }) => {
 	const frame = useCurrentFrame();
 	const camina = caminando && !sentado;
@@ -357,11 +554,29 @@ export const Protagonista: React.FC<ProtagonistaProps> = ({
 	const respira = Math.sin(frame * 0.08 + fase) * 0.006;
 	const rebote = camina ? Math.abs(Math.cos(ph)) * 0.04 : respira;
 	const ce = suave(celebra);
-	const cel = suave(conCelular);
 	const conf = animo === 'confundido' ? 1 : 0;
 	const feliz = animo === 'feliz';
+	const panico = animo === 'panico';
+	const serio = animo === 'serio';
 	const brinco = sentado ? 0 : ce * Math.max(0, Math.sin(frame * 0.35)) * 0.06;
 	const bajada = sentado ? -0.31 : 0;
+
+	// pesos de las acciones nuevas
+	const mc = suave(manosCabeza);
+	const an = suave(anotando);
+	const lz = clamp01(lentes);
+	const vs = clamp01(vaso);
+	const vsIn = vs > 0 ? suave(vs / 0.15) : 0; // aparece el vaso y la mano lo agarra
+	const vsSube = suave(vs); // 0 = abajo, 1 = en la boca
+	const vsToma = suave((vs - 0.55) / 0.45);
+	const panW = pan ? 1 : 0;
+	// lentes: hasta 0.8 viajan en la mano; de 0.8 a 1 ya están en la cara y la mano baja
+	const LENTES_CARA = 0.8;
+	const lentesEnCara = lz >= LENTES_CARA;
+	const lentesMano = lz <= 0 || lz >= 1 ? 0 : lz < LENTES_CARA ? suave(lz / 0.15) : 1 - suave((lz - LENTES_CARA) / (1 - LENTES_CARA));
+	// el celular se guarda si la mano derecha se ocupa en otra cosa
+	const ocupadaDer = Math.max(mc, an, vsIn);
+	const cel = suave(conCelular) * (1 - ocupadaDer);
 
 	const piel = mat('#c98a5e', {r: 0.65});
 	const camisa = mat('#f3e8d2', {r: 0.85});
@@ -370,6 +585,52 @@ export const Protagonista: React.FC<ProtagonistaProps> = ({
 	const rojo = mat(MARCA.rojo, {r: 0.8});
 	const rojoOscuro = mat('#b63823', {r: 0.85});
 	const ojo = mat('#1a1414', {r: 0.3});
+	const cejaM = mat('#2a1d16', {r: 0.8});
+	const labio = mat('#5a2620', {r: 0.5});
+
+	// ---------- cabeza (rotación, se usa también para los lentes en la mano) ----------
+	const inclinacion = conf * 0.24;
+	const tiembla = panico ? Math.sin(frame * 2.1) * 0.012 : 0;
+	const miraAbajo = cel * 0.12 + an * 0.2 - vsToma * 0.16 + tiembla;
+	const rotCabeza = new THREE.Euler(miraAbajo, 0, inclinacion + (panico ? Math.sin(frame * 1.7) * 0.01 : 0));
+	const LENTES_LOCAL: V3 = [0, 0.017, 0.172];
+
+	// ---------- objetivos de las manos (marco de hombros: hombros a y = 1.36) ----------
+	const libreta = new THREE.Vector3(0.0, 1.13, 0.3);
+	const cicloLapiz = frame % 30;
+	const lapizX = (cicloLapiz / 30 - 0.5) * 0.05 + Math.sin(frame * 1.6) * 0.004;
+	const lapizZ = 0.012 - (Math.floor((frame % 90) / 30) * 0.014);
+	const lapizY = cicloLapiz > 26 ? 0.018 : 0;
+	const manoLapiz = libreta.clone().add(new THREE.Vector3(-0.03 + lapizX, 0.085 + lapizY, lapizZ - 0.01));
+	const manoLibreta = libreta.clone().add(new THREE.Vector3(0.088, -0.025, -0.01));
+	// vaso: abajo (al costado) → pecho → boca
+	const vasoAbajo = new THREE.Vector3(-0.27, sentado ? 1.04 : 0.98, 0.2);
+	const vasoPecho = new THREE.Vector3(-0.14, 1.16, 0.3);
+	const vasoBoca = new THREE.Vector3(-0.03, 1.38, 0.29);
+	const vasoBase = vsSube < 0.5 ? vasoAbajo.clone().lerp(vasoPecho, vsSube * 2) : vasoPecho.clone().lerp(vasoBoca, (vsSube - 0.5) * 2);
+	const vasoTilt = -0.75 * vsToma;
+	const manoVaso = vasoBase.clone().add(new THREE.Vector3(-0.06, 0.05, -0.005));
+	// lentes en la mano: de abajo (pecho) a la cara
+	const lentesCara = enCabeza(LENTES_LOCAL, rotCabeza);
+	const lentesAbajo = new THREE.Vector3(-0.1, 1.02, 0.32);
+	const lentesPos = lentesEnCara ? lentesCara : lentesAbajo.clone().lerp(lentesCara, suave(lz / LENTES_CARA));
+	const manoLentes = lentesPos.clone().add(new THREE.Vector3(-0.172, -0.01, -0.02));
+	const manoPan = new THREE.Vector3(0.27, sentado ? 1.06 : 1.02, 0.22);
+
+	type Objetivo = [number, THREE.Vector3, THREE.Vector3];
+	const objetivos = (lado: number): Objetivo[] =>
+		lado < 0
+			? [
+					[an, manoLapiz, new THREE.Vector3(-0.7, -1, -0.1)],
+					[vsIn, manoVaso, new THREE.Vector3(-0.8, -1, -0.2)],
+					[mc, new THREE.Vector3(-0.205, 1.585, 0.01), new THREE.Vector3(-1, 0.1, 0.35)],
+					[lentesMano, manoLentes, new THREE.Vector3(-0.8, -1, -0.1)],
+				]
+			: [
+					[panW, manoPan, new THREE.Vector3(0.8, -1, -0.3)],
+					[an, manoLibreta, new THREE.Vector3(0.8, -1, -0.1)],
+					[mc, new THREE.Vector3(0.205, 1.585, 0.01), new THREE.Vector3(1, 0.1, 0.35)],
+				];
 
 	// ---------- piernas ----------
 	const pierna = (lado: number) => {
@@ -413,12 +674,23 @@ export const Protagonista: React.FC<ProtagonistaProps> = ({
 		ux = lerp(ux, 0, ceA);
 		uz = lerp(uz, lado * celebraZ, ceA);
 		codo = lerp(codo, -0.15, ceA);
-		const hombro = 1.36 + conf * 0.045;
+		const hombro = new THREE.Vector3(lado * 0.31, 1.36 + conf * 0.045, 0);
+		// acciones con objetivo: se mezclan sobre la pose base y se resuelven con IK
+		let pose: PoseBrazo = {q: new THREE.Quaternion().setFromEuler(new THREE.Euler(ux, 0, uz)), codo};
+		const lista = objetivos(lado).filter(([w]) => w > 1e-4);
+		if (lista.length) {
+			const T = fkMano(hombro, pose.q, codo);
+			const P = ATRAS.clone().applyQuaternion(pose.q);
+			for (const [w, obj, polo] of lista) {
+				T.lerp(obj, w);
+				P.lerp(polo.clone().normalize(), w);
+			}
+			pose = ikBrazo(hombro, T, P);
+		}
 		let telefono: React.ReactNode = null;
 		if (lado < 0 && cel > 0.01) {
-			const qBrazo = new THREE.Quaternion().setFromEuler(new THREE.Euler(ux, 0, uz));
-			const qCodo = new THREE.Quaternion().setFromEuler(new THREE.Euler(codo, 0, 0));
-			const q = qBrazo.multiply(qCodo).invert();
+			const qCodo = new THREE.Quaternion().setFromEuler(new THREE.Euler(pose.codo, 0, 0));
+			const q = pose.q.clone().multiply(qCodo).invert();
 			const s = 0.75 * (0.3 + 0.7 * cel);
 			telefono = (
 				<group position={[0, -0.3, 0]} quaternion={[q.x, q.y, q.z, q.w]}>
@@ -432,50 +704,110 @@ export const Protagonista: React.FC<ProtagonistaProps> = ({
 			);
 		}
 		return (
-			<group key={`b${lado}`} position={[lado * 0.31, hombro, 0]} rotation={[ux, 0, uz]}>
+			<group key={`b${lado}`} position={hombro} quaternion={pose.q}>
 				<mesh geometry={G.redonda(0.15, 0.2, 0.17, 0.06)} material={camisa} position={[0, -0.07, 0]} castShadow />
 				<mesh geometry={G.redonda(0.115, 0.16, 0.12, 0.05)} material={piel} position={[0, -0.2, 0]} castShadow />
-				<group position={[0, -0.27, 0]} rotation={[codo, 0, 0]}>
+				<group position={[0, -L_BRAZO, 0]} rotation={[pose.codo, 0, 0]}>
 					<Esf p={[0, 0, 0]} r={0.058} m={piel} seg={12} />
 					<mesh geometry={G.redonda(0.11, 0.26, 0.115, 0.05)} material={piel} position={[0, -0.12, 0]} castShadow />
-					<Esf p={[0, -0.28, 0]} r={0.062} m={piel} seg={14} />
+					<Esf p={[0, -L_ANTEBRAZO, 0]} r={0.062} m={piel} seg={14} />
 					{telefono}
 				</group>
 			</group>
 		);
 	};
 
-	// ---------- cabeza ----------
-	const inclinacion = conf * 0.24;
-	const miraAbajo = cel * 0.12;
+	// ---------- cara ----------
 	const zq = Math.sin(frame * 0.12 + fase);
-	const ojosFelices = feliz || ce > 0.5;
+	const ojosFelices = !panico && !serio && (feliz || ce > 0.5);
 	const boca = (() => {
-		if (conf) return <Esf p={[0.012, -0.075, 0.148]} r={[0.016, 0.013, 0.008]} m={mat('#5a2620', {r: 0.5})} seg={10} sombra={false} />;
+		if (panico)
+			return (
+				<group position={[0, -0.082, 0.147]} rotation={[-0.3, 0, 0]}>
+					<mesh geometry={G.toro(0.024, 0.0085, Math.PI * 2, 6, 16)} material={labio} scale={[1, 1.3, 1]} />
+					<mesh geometry={G.disco(16)} material={mat('#3a1512', {r: 0.7})} position={[0, 0, -0.002]} scale={[0.05, 0.065, 1]} />
+				</group>
+			);
+		if (serio) return <mesh geometry={G.redonda(0.068, 0.012, 0.014, 0.005, 2)} material={labio} position={[0, -0.074, 0.146]} rotation={[-0.32, 0, 0]} />;
+		if (conf) return <Esf p={[0.012, -0.075, 0.148]} r={[0.016, 0.013, 0.008]} m={labio} seg={10} sombra={false} />;
 		if (ojosFelices)
 			return (
 				<group position={[0, -0.06, 0.14]}>
-					<mesh geometry={G.toro(0.045, 0.011, Math.PI, 6, 14)} material={mat('#5a2620', {r: 0.5})} rotation={[-0.25, 0, Math.PI]} />
+					<mesh geometry={G.toro(0.045, 0.011, Math.PI, 6, 14)} material={labio} rotation={[-0.25, 0, Math.PI]} />
 					<mesh geometry={G.disco(16)} material={mat('#7a2f28', {r: 0.6})} position={[0, -0.012, 0.004]} rotation={[-0.25, 0, 0]} scale={[0.08, 0.05, 1]} />
 				</group>
 			);
-		return <mesh geometry={G.toro(0.03, 0.008, Math.PI, 6, 12)} material={mat('#5a2620', {r: 0.5})} position={[0, -0.06, 0.148]} rotation={[-0.25, 0, Math.PI]} />;
+		return <mesh geometry={G.toro(0.03, 0.008, Math.PI, 6, 12)} material={labio} position={[0, -0.06, 0.148]} rotation={[-0.25, 0, Math.PI]} />;
 	})();
-	const ojos = [-1, 1].map((s) =>
-		ojosFelices ? (
+	const ojos = [-1, 1].map((s) => {
+		if (panico)
+			return (
+				<group key={s}>
+					<Esf p={[s * 0.064, 0.02, 0.143]} r={[0.032, 0.039, 0.016]} c="#ffffff" seg={14} o={{r: 0.35}} sombra={false} />
+					<Esf p={[s * 0.062, 0.017, 0.158]} r={[0.0095, 0.0115, 0.005]} m={ojo} seg={10} sombra={false} />
+				</group>
+			);
+		if (serio)
+			return (
+				<group key={s}>
+					<Esf p={[s * 0.06, 0.006, 0.15]} r={[0.022, 0.012, 0.011]} m={ojo} seg={12} sombra={false} />
+					{/* párpado a media asta */}
+					<mesh geometry={G.redonda(0.054, 0.011, 0.014, 0.005, 2)} material={cejaM} position={[s * 0.06, 0.02, 0.153]} rotation={[-0.15, 0, 0]} />
+				</group>
+			);
+		return ojosFelices ? (
 			<mesh key={s} geometry={G.toro(0.02, 0.0075, Math.PI, 6, 10)} material={ojo} position={[s * 0.06, 0.012, 0.152]} rotation={[-0.15, 0, 0]} />
 		) : (
 			<group key={s}>
 				<Esf p={[s * 0.06, 0.015, 0.15]} r={[0.02, 0.027, 0.012]} m={ojo} seg={12} sombra={false} />
 				<Esf p={[s * 0.06 + 0.006, 0.026, 0.16]} r={0.006} c="#ffffff" seg={6} sombra={false} />
 			</group>
-		),
-	);
-	const cejas = [-1, 1].map((s) => {
-		const alza = conf ? (s > 0 ? 0.03 : -0.004) : feliz ? 0.012 : 0;
-		const giro = conf ? (s > 0 ? -0.35 : 0.25) : s * -0.1;
-		return <B key={s} p={[s * 0.062, 0.07 + alza, 0.145]} s={[0.055, 0.012, 0.012]} rot={[-0.3, 0, giro]} c="#2a1d16" sombra={false} />;
+		);
 	});
+	const cejas = [-1, 1].map((s) => {
+		if (panico) return <B key={s} p={[s * 0.064, 0.085, 0.14]} s={[0.055, 0.013, 0.013]} rot={[-0.35, 0, -s * 0.32]} m={cejaM} sombra={false} />;
+		const alza = conf ? (s > 0 ? 0.03 : -0.004) : feliz ? 0.012 : 0;
+		const giro = conf ? (s > 0 ? -0.35 : 0.25) : serio ? 0 : s * -0.1;
+		return <B key={s} p={[s * 0.062, 0.07 + alza, 0.145]} s={[0.055, 0.012, 0.012]} rot={[-0.3, 0, giro]} m={cejaM} sombra={false} />;
+	});
+	// gotas de sudor (pánico)
+	const gotas = panico
+		? (
+				[
+					[0.168, 0.05, 0.075, 0],
+					[-0.15, 0.075, 0.1, 0.45],
+				] as const
+			).map(([x, y, z, k], i) => {
+				const f = (frame * 0.022 + k) % 1;
+				const e = 1 - f * f * f * f;
+				return (
+					<group key={i} position={[x, y - f * 0.07, z]} scale={0.9 + 0.2 * e}>
+						<Esf p={[0, 0, 0]} r={0.016 * e} c="#8fd3ff" o={{r: 0.1, e: '#5fb8ff', ei: 0.3}} seg={12} sombra={false} />
+						<mesh geometry={G.cono(0, 12)} material={mat('#8fd3ff', {r: 0.1, e: '#5fb8ff', ei: 0.3})} position={[0, 0.018 * e, 0]} scale={[0.031 * e, 0.03 * e, 0.031 * e]} />
+					</group>
+				);
+			})
+		: null;
+	const gorroSalta = panico ? 0.05 + Math.abs(Math.sin(frame * 0.55)) * 0.018 : 0;
+
+	// ---------- lo que va en las manos (marco de hombros) ----------
+	const enManos: React.ReactNode[] = [];
+	if (an > 0.01) {
+		const sA = 0.4 + 0.6 * an;
+		enManos.push(
+			<group key="libreta" scale={sA} position={[libreta.x * (1 - sA), libreta.y * (1 - sA), libreta.z * (1 - sA)]}>
+				<LibretaMano p={[libreta.x, libreta.y, libreta.z]} rot={[0.25, 0, 0.06]} />
+				<LapizMano a={manoLapiz.clone().add(new THREE.Vector3(0.012, -0.075, 0.032))} b={manoLapiz.clone().add(new THREE.Vector3(-0.035, 0.05, -0.03))} />
+			</group>,
+		);
+	}
+	if (vsIn > 0.01) {
+		enManos.push(<VasoConAgua key="vaso" position={[vasoBase.x, vasoBase.y - 0.02, vasoBase.z]} rotation={[vasoTilt, 0, vasoTilt * 0.2]} escala={vsIn} nivel={0.75 - 0.35 * vsToma} />);
+	}
+	if (pan) enManos.push(<PanFrances key="pan" position={[manoPan.x - 0.01, manoPan.y + 0.035, manoPan.z + 0.035]} rotation={[0.15, 0.5, 0.1]} />);
+	if (lz > 0.001 && !lentesEnCara) {
+		enManos.push(<LentesOscuros key="lentes" position={[lentesPos.x, lentesPos.y, lentesPos.z]} rotation={[rotCabeza.x, rotCabeza.y, rotCabeza.z]} escala={suave(lz / 0.12)} />);
+	}
 
 	return (
 		<group position={position} rotation={[0, rotationY, 0]} scale={escala}>
@@ -509,7 +841,7 @@ export const Protagonista: React.FC<ProtagonistaProps> = ({
 				))}
 				<Esf p={[0, 1.37, 0.142]} r={[0.012, 0.012, 0.005]} c="#c9b48d" seg={8} sombra={false} />
 				{/* cabeza (pivote en el cuello) */}
-				<group position={[0, 1.42, 0]} rotation={[miraAbajo, 0, inclinacion]}>
+				<group position={[0, 1.42, 0]} rotation={rotCabeza}>
 					<group position={[0, 0.14, 0]}>
 						<Esf p={[0, 0, 0]} r={[0.165, 0.172, 0.16]} m={piel} seg={28} />
 						{ojos}
@@ -522,10 +854,12 @@ export const Protagonista: React.FC<ProtagonistaProps> = ({
 						))}
 						<Esf p={[-0.165, -0.01, 0]} r={[0.025, 0.04, 0.03]} m={piel} seg={8} />
 						<Esf p={[0.165, -0.01, 0]} r={[0.025, 0.04, 0.03]} m={piel} seg={8} />
+						{gotas}
+						{lentesEnCara ? <LentesOscuros position={[LENTES_LOCAL[0], LENTES_LOCAL[1], LENTES_LOCAL[2]]} /> : null}
 						{/* pelo bajo el gorro */}
 						<Esf p={[0, 0.03, -0.03]} r={[0.17, 0.15, 0.165]} c="#2a1d16" seg={20} />
 						{/* gorro rojo con doblez y pompón */}
-						<group position={[0, 0.05, -0.008]} rotation={[-0.12, 0, 0]}>
+						<group position={[0, 0.05 + gorroSalta, -0.008]} rotation={[-0.12 - gorroSalta * 1.5, 0, 0]}>
 							<mesh scale={[0.18, 0.17, 0.178]} castShadow material={rojo}>
 								<sphereGeometry args={[1, 24, 12, 0, Math.PI * 2, 0, Math.PI / 2]} />
 							</mesh>
@@ -539,6 +873,7 @@ export const Protagonista: React.FC<ProtagonistaProps> = ({
 				</group>
 				{arm(-1)}
 				{arm(1)}
+				{enManos}
 			</group>
 			{/* "?" flotante */}
 			{conf ? (
